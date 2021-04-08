@@ -8,13 +8,21 @@ You can use Kusto queries as the data source in a number of places. E.g.
 * Azure Dashboards
 * Jupyter Notebooks (with the Kqlmagic extension)
 
-
-# Resources 
+# Learning resources (KQL)
 Here are some resources for you to get started on Kusto Query Language (KQL). Use CTRL+click to open them in a new browser tab/window.
 * [Kusto Query Language Overview](https://docs.microsoft.com/en-us/azure/kusto/query/)
 * [Kusto Query Language Tutorial](https://docs.microsoft.com/en-us/azure/kusto/query/tutorial)
 * [I know SQL. How do I do that in KQL?](https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/sqlcheatsheet)
 * [Kusto Query Language (KQL) from Scratch (Pluralsight course, requires subscription)](https://www.pluralsight.com/courses/kusto-query-language-kql-from-scratch)
+* [Microsoft Azure Data Explorer - Advanced KQL (Pluralsight course, requires subscription)](https://app.pluralsight.com/library/courses/microsoft-azure-data-explorer-advanced-query-capabilities/table-of-contents)
+
+# KQL editors and clients
+You can write and execute KQL in various tools. E.g.
+* [Kusto Explorer (desktop application)](https://docs.microsoft.com/en-us/azure/data-explorer/kusto/tools/kusto-explorer). Here is [How to connect to Application Insights in Kusto Explorer](https://docs.microsoft.com/en-us/azure/data-explorer/query-monitor-data)
+* In a Jupyter notebook hosted in [Azure Data Studio](https://github.com/microsoft/BCTech/tree/master/samples/AppInsights/TroubleShootingGuides#what-is-azure-data-studio)
+* In a Jupyter notebook hosted in Visual Studio Code (with the Python and Jupyter Notebooks extensions installed)
+* Application Insights portal (Under *Logs* in the *Monitoring* menu)
+* PowerShell (using the REST api). See an example here: https://demiliani.com/2020/12/16/using-powershell-to-retrieve-your-dynamics-365-business-central-telemetry/
 
 
 # Signal overview
@@ -33,11 +41,24 @@ Signal is added incrementally to Business Central. In this table you can see in 
 | Extension lifecycle | 2020 release wave 1 (16.3) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-extension-lifecycle-trace |
 | Client page views | 2020 release wave 1 (16.3) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-page-view-trace |
 | HTTP status and HTTP headers added to Web Service Request signal | 2020 release wave 1 (16.3) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-webservices-trace |
-| Web Service Key Authentication | 2020 release wave 2 (17.x) | Release plan: https://docs.microsoft.com/en-us/dynamics365-release-plan/2020wave2/smb/dynamics365-business-central/signal-web-service-key-authentication-added-application-insights-telemetry-partners |
 | AL HttpClient signal (outgoing web service calls) | 2020 release wave 2 (17.0) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-webservices-outgoing-trace |
-| Long Running AL execution | 2020 release wave 2 (17.0) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-al-method-trace |
 | App Key Vault Secret Acquisitions | 2020 release wave 2 (17.0) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-extension-key-vault-trace  |
-| Extension lifecycle for app telemetry | 2020 release wave 2 (17.x) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-extension-lifecycle-trace |
+| Long Running AL execution | 2020 release wave 2 (17.1) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-al-method-trace |
+| Extension lifecycle for app telemetry | 2020 release wave 2 (17.1) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-extension-lifecycle-trace |
+| Sensitive Field Monitoring | 2020 release wave 2 (17.1) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-field-monitoring-trace |
+| Retention Policy | 2020 release wave 2 (17.1) | (pending link to docs)) |
+| Performance Toolkit | 2020 release wave 2 (17.1) | (pending link to docs)) |
+| Job Queue | 2020 release wave 2 (17.2) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-job-queue-lifecycle-trace |
+| Permissions | 2020 release wave 2 (17.2) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-permission-changes-trace |
+| Configuration Package | 2020 release wave 2 (17.2) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-configuration-package-trace |
+| Email | 2020 release wave 2 (17.2) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-email-trace |
+| Posting | 2020 release wave 2 (17.2) | pending link to docs |
+| Web Service Key Authentication | 2020 release wave 2 (17.3) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-webservices-access-key-trace |
+| Reporting engine in reporting signal | 2020 release wave 2 (17.3) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-reports-trace |
+| HTTP authorization | 2020 release wave 2 (17.3) | (pending docs), sample KQL code updated |
+| Client page views (for ISVs) | 2021 release wave 1 (18.0) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-page-view-trace |
+| Index/Key lifecycle | 2021 release wave 1 (18.0) | (pending docs), sample KQL code updated |
+
 
 
 # Disclaimer
