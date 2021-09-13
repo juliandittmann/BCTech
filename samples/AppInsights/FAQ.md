@@ -21,11 +21,33 @@ Application Insights is billed based on the volume of telemetry data that your a
 
 Please check the documentation <https://azure.microsoft.com/en-us/pricing/details/monitor/> for up-to-date information on pricing.
 
+Azure monitor alerts are billed separately.
+
+Here is a quote from a partner using telemetry:
+_We have been using telemetry for some months now and have enabled 20+ apps as well as environment data from dev systems and build pipelines. Last month we ingested 800+ traces that corresponded to 2.3GB of data. Eventually we might hit some of those thresholds, but then we can decide if we want to spend money on telemetry (probably will) and how much. With our current setup, we will probably limit ingestion and once that no longer suffices, we will add sampling to the mix._
+
+## How can I reduce cost?
+To reduce ingestion cost, you can
+* set limits on daily data ingestion
+* reduce data ingestion by sampling to only ingest a percentage of the inbound data (see https://docs.microsoft.com/en-us/azure/azure-monitor/app/sampling#ingestion-sampling)
+* set alerts on cost thresholds being exceeded to get notified if this happens
+
+Use this KQL query [MonthlyIngestion.kql](KQL/Queries/HelperQueries/MonthlyIngestion.kql) to see the data distribution of different event ids in your telemetry database.
+
+See all helper queries here: [HelperQueries](KQL/Queries/HelperQueries/)
+
+## Should each customer/app have their own Application Insights resource, rather than one insight for multiple customers?
+Partitioning of Application Insights resources across multiple customers or apps depends on what you use telemetry for. The benefit of having a 1-1 relationship between customers/apps and Application Insights resources is that you can also use the Usage features in the Application Insights portal to monitor how a particular customer is using BC. It will also make it cheaper for you because the free limits per Application Insights is bound to each customer/app and in case the customer/app goes beyond the free limit, it is easy to separate the cost of telemetry per customer/app. Downside of a 1-1 relationship between customers/apps and Application Insights resources is that you have more Azure resources to manage, including any cross-customer alerting/monitoring that you might want to setup.
+
+Also, it is recommended to use per-environment telemetry from per-app telemetry into separate Application Insights resources.
+
 ## Where can I learn more about Kusto Query Language (KQL) and Azure Data Studio?
 Please visit the [KQL README page](KQL/README.md) for learning resources on KQL and the [Trouble Shooting Guides README page](TroubleShootingGuides/README.md) for learning resources on Azure Data Studio.
 
 ## How can I see what data is available in my Application Insights subscription
-Use this KQL query [AvailableSignal.kql](https://github.com/microsoft/BCTech/blob/master/samples/AppInsights/KQL/AvailableSignal.kql) to see if you have any data in your telemetry database, and also what kind of signal is present.
+Use this KQL query [AvailableSignal.kql](KQL/Queries/HelperQueries/AvailableSignal.kql) to see if you have any data in your telemetry database, and also what kind of signal is present.
+
+See all helper queries here: [HelperQueries](KQL/Queries/HelperQueries/)
 
 ## I deployed Azure dashboards, but they show no data
 If you have data present in Application Insights, please check the setting in the *Time range* selector on the  dashboard:

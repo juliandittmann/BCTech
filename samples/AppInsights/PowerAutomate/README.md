@@ -1,24 +1,18 @@
-# Get alerts when something is not right
-If something happens in your environment or for one of your customers that you need to take action on, it is better that the system sends you an alert. Azure Application Insights makes it easy to define such alerts.
+In this folder, you will find information that illustrate how you can query Azure Application Insights data in a Power Automate flow.
 
-## How do I create alerts in Azure Application Insights?
-Here is an example to get you started:
- 1. Open the Azure portal and locate your Application Insights resource
- 2. Click "Alerts" in the navigation pane on the left
- 3. Use one of the KQL samples from this section in the condition for a custom log search 
+# How do I use Power Automate to query telemetry in Azure Application Insights?
+To query telemetry from Power Automate, do as follows
+1) Go the Azure Application Insights portal, go to the *API Access* menu, and copy the application id and generate an API key 
+2) In Power Automate, search for the Application Insights connector and use the API key for authorization.
 
-## How do I get alerts via email?
-If you want alerts via email, you can just create a new action group in your Application Insights resource, and in your alerts add an action to send an email.
+See also https://docs.microsoft.com/en-us/connectors/applicationinsights/
 
-## How do I get alerts via Microsoft Teams?
-You can also send alerts to a channel in Microsoft Teams. See an example of how to set that up here: https://dailydotnettips.com/sending-your-azure-application-insights-alerts-to-team-sites-using-azure-logic-app/
+# How do I find Power Automate templates to query telemetry in Azure Application Insights?
+The Azure Application Insights connector for Power Automate have templates available for you to get started. 
 
-## How do I get alerts on my phone?
-This video shows how you can get alerts as push notifications on your phone: https://www.youtube.com/watch?v=nqqVEISjSGE
+See https://us.flow.microsoft.com/en-us/connectors/shared_applicationinsights/azure-application-insights/ for examples.
 
-## Want to learn more about Azure Monitor alerts?
-Please read more in the documentation for Azure Application Insights: https://docs.microsoft.com/en-us/azure/azure-monitor/platform/alerts-unified-log
-
+Krzysztof Bialowas also blogged on how to use Power Automate to to monitor app source installation/upgrade failures. Read more on his blog here: http://www.mynavblog.com/2021/08/24/telemetry-with-power-automate-how-to-get-the-report-directly-on-your-mailbox/
 
 
 # Disclaimer
