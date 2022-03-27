@@ -23,14 +23,26 @@ traces
 , alObjectName = customDimensions.alObjectName
 , alObjectType = customDimensions.alObjectType
 , alStackTrace = customDimensions.alStackTrace
-, serverExecutionTime = customDimensions.serverExecutionTime
-, serverExecutionTimeInMS = toreal(totimespan(customDimensions.serverExecutionTime))/10000 //the datatype for executionTime is timespan 
-, totalTime = customDimensions.totalTime
-, totalTimeInMS = toreal(totimespan(customDimensions.totalTime))/10000 //the datatype for executionTime is timespan 
 , numberOfRows = customDimensions.numberOfRows
 , result = customDimensions.result
-// reportingEngine dimension added in version 17.3
+// reportingEngine dimension was added in version 17.3
 , reportingEngine = customDimensions.reportingEngine
+, serverExecutionTime = customDimensions.serverExecutionTime
+, serverExecutionTimeInMS = toreal(totimespan(customDimensions.serverExecutionTime))/10000 //the datatype for executionTime is timespan 
+// sqlDatabaseAccessIntent dimension added in version 19.1
+, sqlDatabaseAccessIntent = customDimensions.sqlDatabaseAccessIntent 
+// reportAction dimension added in version 20.0
+, reportAction = customDimensions.reportAction
+// documentFormat dimension added in version 20.0
+, documentFormat = customDimensions.documentFormat
+// layout dimensions added in version 20.0
+, LayoutAppId = customDimensions.layoutAppId
+, LayoutName = customDimensions.layoutName
+, LayoutType = customDimensions.layoutType
+, sqlExecutes = customDimensions.sqlExecutes 
+, sqlRowsRead = customDimensions.sqlRowsRead
+, totalTime = customDimensions.totalTime
+, totalTimeInMS = toreal(totimespan(customDimensions.totalTime))/10000 //the datatype for executionTime is timespan 
 , message, customDimensions
 
 
@@ -55,13 +67,17 @@ traces
 , alObjectType = customDimensions.alObjectType
 , alStackTrace = customDimensions.alStackTrace
 , failureReason = customDimensions.result
+, numberOfRows = customDimensions.numberOfRows
+// reportingEngine dimension added in version 17.3
+, reportingEngine = customDimensions.reportingEngine
+// reportAction dimension added in version 20.0
+, reportAction = customDimensions.reportAction
+// documentFormat dimension added in version 20.0
+, documentFormat = customDimensions.documentFormat
 , serverExecutionTime = customDimensions.serverExecutionTime
 , serverExecutionTimeInMS = toreal(totimespan(customDimensions.serverExecutionTime))/10000 //the datatype for executionTime is timespan 
 , totalTime = customDimensions.totalTime
 , totalTimeInMS = toreal(totimespan(customDimensions.totalTime))/10000 //the datatype for executionTime is timespan 
-, numberOfRows = customDimensions.numberOfRows
-// reportingEngine dimension added in version 17.3
-, reportingEngine = customDimensions.reportingEngine
 , message, customDimensions
 
 
@@ -89,6 +105,10 @@ traces
 )
 // reportingEngine dimension added in version 17.3
 , reportingEngine = customDimensions.reportingEngine
+// reportAction dimension added in version 20.0
+, reportAction = customDimensions.reportAction
+// documentFormat dimension added in version 20.0
+, documentFormat = customDimensions.documentFormat
 , message, customDimensions
 
 
@@ -114,3 +134,7 @@ traces
 , alStackTrace = customDimensions.alStackTrace
 // reportingEngine dimension added in version 17.3
 , reportingEngine = customDimensions.reportingEngine
+// reportAction dimension added in version 20.0
+, reportAction = customDimensions.reportAction
+// documentFormat dimension added in version 20.0
+, documentFormat = customDimensions.documentFormat

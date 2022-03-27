@@ -15,14 +15,16 @@ Here are some resources for you to get started on Kusto Query Language (KQL). Us
 * [I know SQL. How do I do that in KQL?](https://docs.microsoft.com/en-us/azure/data-explorer/kusto/query/sqlcheatsheet)
 * [Kusto Query Language (KQL) from Scratch (Pluralsight course, requires subscription)](https://www.pluralsight.com/courses/kusto-query-language-kql-from-scratch)
 * [Microsoft Azure Data Explorer - Advanced KQL (Pluralsight course, requires subscription)](https://app.pluralsight.com/library/courses/microsoft-azure-data-explorer-advanced-query-capabilities/table-of-contents)
+* [How can I query multiple Application Insights resources from the same Kusto query? (blog post by Microsoft MVP Stefano Demiliani)](https://demiliani.com/2022/03/01/querying-telemetries-from-multiple-application-insights-instances/)
 
 # Which tools can I use (KQL editors and clients)?
 You can write and execute KQL in various tools. E.g.
 * [Kusto Explorer (desktop application)](https://docs.microsoft.com/en-us/azure/data-explorer/kusto/tools/kusto-explorer). Here is [How to connect to Application Insights in Kusto Explorer](https://docs.microsoft.com/en-us/azure/data-explorer/query-monitor-data)
+* [Azure Data Explorer](https://dataexplorer.azure.com). Here is [How to connect to Application Insights in Azure Data Explorer](https://docs.microsoft.com/en-us/azure/data-explorer/query-monitor-data)
 * In a Jupyter notebook hosted in [Azure Data Studio](https://github.com/microsoft/BCTech/tree/master/samples/AppInsights/TroubleShootingGuides#what-is-azure-data-studio)
 * In a Jupyter notebook hosted in Visual Studio Code (with the Python and Jupyter Notebooks extensions installed)
 * Application Insights portal (Under *Logs* in the *Monitoring* menu)
-* PowerShell (using the REST api). See an example here: https://demiliani.com/2020/12/16/using-powershell-to-retrieve-your-dynamics-365-business-central-telemetry/
+* PowerShell (using the REST api). See an example here: [Powershell samples](../Powershell)
 
 
 # What signal is available in which version?
@@ -60,10 +62,20 @@ Signal is added incrementally to Business Central. In this table you can see in 
 | Index/Key lifecycle | 2021 release wave 1 (18.0) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-table-index-trace#enabled |
 | Sensitive Field Monitoring (field added/removed) | 2021 release wave 1 (18.0) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-field-monitoring-trace |
 | Upgrade tag signal | 2021 release wave 1 (18.0) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-extension-update-trace |
-| Extension lifecycle (dependent extensions) | 2021 release wave 1 (18.1) | (pending docs), sample KQL code updated |
-| Appsource validation | 2021 release wave 1 (18.4) | (pending docs), sample KQL code updated |
-
-
+| Extension lifecycle (dependent extensions) | 2021 release wave 1 (18.1) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-extension-lifecycle-trace |
+| Appsource validation | 2021 release wave 1 (18.4) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-appsource-submission-validation-trace |
+| Use of read scale-out in reporting | 2021 release wave 2 (19.1) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-reports-trace |
+| Feature Telemetry | 2021 release wave 2 (19.1) | (pending docs) |
+| Task Scheduler Telemetry | 2021 release wave 2 (19.1) | https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-task-scheduler-trace |
+| Database deadlocks | 2022 release wave 1 (20.0) | Draft KQL sample ready, https://docs.microsoft.com/en-us/dynamics365-release-plan/2022wave1/smb/dynamics365-business-central/telemetry-when-database-deadlock-occurs-this-logged-telemetry |
+| Database wait statistics | 2022 release wave 1 (20.0) | KQL sample ready, https://docs.microsoft.com/en-us/dynamics365-release-plan/2022wave1/smb/dynamics365-business-central/performance-partners-get-database-insights-through-virtual-tables-in-client-pages |
+| Verbose telemetry enabled | 2022 release wave 1 (20.0) | KQL sample ready, https://docs.microsoft.com/en-us/dynamics365-release-plan/2022wave1/smb/dynamics365-business-central/telemetry-action-enabling-detailed-telemetry-logged-telemetry |
+| General error dialogs | 2022 release wave 1 (20.0) | KQL sample ready, https://docs.microsoft.com/en-us/dynamics365-release-plan/2022wave1/smb/dynamics365-business-central/telemetry-error-dialogs-are-logged-telemetry |
+| Report action and document type in reporting | 2022 release wave 1 (20.0) | KQL sample ready, https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-reports-trace |
+| Environment lifecycle and configuration changes| 2022 release wave 1 (20.0) | (pending link to release note) |
+| Session stops | 2022 release wave 1 (20.0) | (pending link to release note) |
+| Use of read scale-out in web service calls | 2022 release wave 1 (20.x) | (pending link to release note) |
+| Permission error dialogs | 2022 release wave 1 (20.x) | (pending link to release note) |
 
 # Disclaimer
 Microsoft Corporation (“Microsoft”) grants you a nonexclusive, perpetual, royalty-free right to use and modify the software code provided by us for the purposes of illustration  ("Sample Code") and to reproduce and distribute the object code form of the Sample Code, provided that you agree: (i) to not use our name, logo, or trademarks to market your software product in which the Sample Code is embedded; (ii) to include a valid copyright notice on your software product in which the Sample Code is embedded; and (iii) to indemnify, hold harmless, and defend us and our suppliers from and against any claims or lawsuits, whether in an action of contract, tort or otherwise, including attorneys’ fees, that arise or result from the use or distribution of the Sample Code or the use or other dealings in the Sample Code. Unless applicable law gives you more rights, Microsoft reserves all other rights not expressly granted herein, whether by implication, estoppel or otherwise. 

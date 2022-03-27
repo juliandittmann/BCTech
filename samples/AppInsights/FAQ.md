@@ -1,4 +1,4 @@
-# Frequently Asked Questions (FAQ)
+# Business Central Telemetry FAQ (Frequently Asked Questions)
 
 ## How do I get started?
 Business Central can send telemetry to one or more **Azure Application Insights** (Application Insights) accounts.
@@ -28,16 +28,20 @@ _We have been using telemetry for some months now and have enabled 20+ apps as w
 
 ## How can I reduce cost?
 To reduce ingestion cost, you can
-* set limits on daily data ingestion
 * reduce data ingestion by sampling to only ingest a percentage of the inbound data (see https://docs.microsoft.com/en-us/azure/azure-monitor/app/sampling#ingestion-sampling)
+* set a daily limit of how much data that can be ingested
 * set alerts on cost thresholds being exceeded to get notified if this happens
+
+To reduce data retention cost, you can
+* purge data from your Application Insights resource (see _How do I delete data from Application Insights?_ below)
+
 
 Use this KQL query [MonthlyIngestion.kql](KQL/Queries/HelperQueries/MonthlyIngestion.kql) to see the data distribution of different event ids in your telemetry database.
 
 See all helper queries here: [HelperQueries](KQL/Queries/HelperQueries/)
 
 ## Should each customer/app have their own Application Insights resource, rather than one insight for multiple customers?
-Partitioning of Application Insights resources across multiple customers or apps depends on what you use telemetry for. The benefit of having a 1-1 relationship between customers/apps and Application Insights resources is that you can also use the Usage features in the Application Insights portal to monitor how a particular customer is using BC. It will also make it cheaper for you because the free limits per Application Insights is bound to each customer/app and in case the customer/app goes beyond the free limit, it is easy to separate the cost of telemetry per customer/app. Downside of a 1-1 relationship between customers/apps and Application Insights resources is that you have more Azure resources to manage, including any cross-customer alerting/monitoring that you might want to setup.
+Partitioning of Application Insights resources across multiple customers or apps depends on what you use telemetry for. The benefit of having a 1-1 relationship between customers/apps and Application Insights resources is that you can also use the Usage features in the Application Insights portal to monitor how a particular customer is using BC. It also makes it easy to separate the cost of telemetry per customer/app. Downside of a 1-1 relationship between customers/apps and Application Insights resources is that you have more Azure resources to manage, including any cross-customer alerting/monitoring that you might want to setup.
 
 Also, it is recommended to use per-environment telemetry from per-app telemetry into separate Application Insights resources.
 
@@ -63,6 +67,8 @@ Purge data in an Application Insights component by a set of user-defined filters
 
 See <https://docs.microsoft.com/en-us/rest/api/application-insights/components/purge#examples> 
 
+You can use Powershell to setup a purge process, see an example here: [How do I use Powershell to delete telemetry data?](Powershell/README.md)
+
 ## Can I grant read-only access to Application Insights?
 To grant a person read-only access to Application Insights, go to the Access control (IAM) page in the Application Insights portal, and then add the role assignment "Reader" to the person. 
 
@@ -70,6 +76,9 @@ You might also need to add the role assignment "Reader" to the person on the Res
 
 ## What about Privacy regulations such as GDPR?
 The Business Central service does not emit any End User Identifiable Information (EUII) to Application Insights. So the telemetry is born GDPR compliant. The service only emits data that is classified as either System Metadata or Organization Identifiable Information (OII). The meaning of these classifications are described here: [DataClassification Option Type](https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/methods-auto/dataclassification/dataclassification-option)
+
+## Can I get telemetry in Azure Application Insights for on-premises installations?
+Yes, telemetry also work for on-premises installations (private or public cloud). A few events are not emitted when running Business Central on-premises (see an overview here https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-overview). See here how to enable telemetry on-premises: https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-enable-application-insights#enable-on-tenants
 
 ## Will you backport the Application Insights instrumentation to versions prior to 15.0?
 It took a lot of refactoring in the server and client to make this happen. So it is unlikely that we will backport the Application Insights instrumentation to versions prior to 15.0.
@@ -83,6 +92,8 @@ This is documented here: https://docs.microsoft.com/en-us/dynamics365/business-c
 See the Application Insights documentation for an introduction on how to emit telemetry from a .NET console application:
 [The Application Insights for .NET console applications](https://docs.microsoft.com/en-us/azure/azure-monitor/app/console)
 
+
+Another option is to emit ETW events to Azure Log Analytics, see Marije Brummels blog post [Using Azure Log Analytics on older Dynamics NAV versions (blog post)](https://marijebrummel.blog/2021/11/28/using-azure-log-analytics-on-older-dynamics-nav-versions/) or her Github sample repo [Using Azure Log Analytics with Dynamics NAV (Github repo)](https://github.com/marijebrummel/Azure.LogAnalytics.NAV) for examples.
 
 # Disclaimer
 Microsoft Corporation (“Microsoft”) grants you a nonexclusive, perpetual, royalty-free right to use and modify the software code provided by us for the purposes of illustration  ("Sample Code") and to reproduce and distribute the object code form of the Sample Code, provided that you agree: (i) to not use our name, logo, or trademarks to market your software product in which the Sample Code is embedded; (ii) to include a valid copyright notice on your software product in which the Sample Code is embedded; and (iii) to indemnify, hold harmless, and defend us and our suppliers from and against any claims or lawsuits, whether in an action of contract, tort or otherwise, including attorneys’ fees, that arise or result from the use or distribution of the Sample Code or the use or other dealings in the Sample Code. Unless applicable law gives you more rights, Microsoft reserves all other rights not expressly granted herein, whether by implication, estoppel or otherwise. 
