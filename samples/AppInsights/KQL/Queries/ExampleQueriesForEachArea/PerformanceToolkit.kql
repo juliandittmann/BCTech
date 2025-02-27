@@ -1,0 +1,86 @@
+// KQL samples - Performance toolkit
+// Telemetry for the performance toolkit is supported from version 21.3
+// Earlier versions of the toolkit will emit telemetry, but in a beta-version of the schema.
+
+// Performance Toolkit run started.
+traces
+| where timestamp > ago(7d) // adjust to your needs
+| where customDimensions.eventId == 'AL0000DHR'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+, suiteName=customDimensions.alCode
+, runID = customDimensions.alRunID // available from version 21.3
+, sessionCount = case(
+  customDimensions.extensionVersion startswith '19', customDimensions.['alTotal No. of Sessions'] // v19 had different schema
+, customDimensions.alSessionCount
+) 
+, currentRunType = case(
+  customDimensions.extensionVersion startswith '19', customDimensions.['alCurrent Run Type'] // v19 had different schema
+, customDimensions.alCurrentRunType
+)
+// use runUniqueId to join to event AL0000DGF
+| extend runUniqueId = case(
+  extensionVersion startswith '21.3', customDimensions.alRunID // this is the officially supported version
+, extensionVersion startswith '19', '' // v19 did not have this
+, strcat(aadTenantId, environmentName, companyName, suiteName, runID) // only makes sense from version 20
+)
+| project-rename bcptVersion=extensionVersion
+
+
+// Performance Toolkit run finished.
+traces
+| where timestamp > ago(7d) // adjust to your needs
+| where customDimensions.eventId == 'AL0000DHS'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+, extensionPublisher = customDimensions.extensionPublisher
+, extensionVersion = customDimensions.extensionVersion
+, extensionName = customDimensions.extensionName
+, extensionId = customDimensions.extensionId
+, clientType = customDimensions.clientType
+, alCode = customDimensions.alCode
+, alRunID = customDimensions.alRunID // introduced in 21.3
+, alSessionCount = customDimensions.alSessionCount
+, alDurationInMinutes = customDimensions.alDurationInMinutes
+, alCurrentRunType = customDimensions.alCurrentRunType
+
+
+// Performance Toolkit scenario completed
+traces
+| where timestamp > ago(7d) // adjust to your needs
+| where customDimensions.eventId == 'AL0000DGF'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+, clientType = customDimensions.clientType
+, alRunID = customDimensions.alRunID // introduced in 21.3
+, bcptSuiteName = case(
+  customDimensions.extensionVersion startswith '19', customDimensions.alcode
+, customDimensions.alCode
+)
+, durationInMs = case(
+  customDimensions.extensionVersion startswith '19', customDimensions.alduration
+, customDimensions.alDurationInMs 
+)
+, sqlStatements = case(
+  customDimensions.extensionVersion startswith '19', customDimensions.alnoOfSqlStatements
+, customDimensions.alNoOfSqlStatements 
+)
+, bcptCodeunitName = customDimensions.alCodeunitName 
+, bcptCodeunitId = customDimensions.alCodeunitId 
+, bcptSessionNo = customDimensions.alSessionNo 
+, bcptOperation = customDimensions.alOperation 
+, bcptScenarioStatus = customDimensions.alStatus // Possible values: Error, Success
+, alLineNo = customDimensions.alLineNo 
+| extend runUniqueId = case(
+  extensionVersion startswith '19', '' // v19 did not have this
+, strcat(aadTenantId, environmentName, companyName, bcptSuiteName, runId) // only makes sense from version 20
+)

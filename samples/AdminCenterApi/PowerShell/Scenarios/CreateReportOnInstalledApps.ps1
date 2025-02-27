@@ -8,14 +8,14 @@
 #  - BC Admin Center API; get an environment's installed apps
 #  - BC Admin Center API: get an environment's available app updates
 
-Install-Module PartnerCenter  # only needs to be done once, see documentation at https://docs.microsoft.com/powershell/module/partnercenter
+Install-Module PartnerCenter  # only needs to be done once, see documentation at https://learn.microsoft.com/powershell/module/partnercenter
 
 # PREPARATION
 Connect-PartnerCenter
 
 Add-Type -Path "C:\Program Files\WindowsPowerShell\Modules\AzureAD\2.0.2.76\Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
 $aadAppId = "a19cb26a-2e4c-408b-82e1-6311742ecc50"
-$aadAppRedirectUri = "nativeBusinessCentralClient://auth"
+$aadAppRedirectUri = "http://localhost"
 
 $outputFilePath = "c:\temp\AppReport.csv"
 

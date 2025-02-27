@@ -1,0 +1,113 @@
+// KQL samples - Cloud Migration
+// Introduced in 22.1
+
+// all signal related to Cloud Migration
+traces
+| where customDimensions.alCategory == 'CloudMigration'
+
+
+// Companion table repair scheduled
+traces
+| where timestamp > ago(7d)
+| where customDimensions has 'AL0000FXC'
+| where customDimensions.eventId == 'AL0000FXC'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, clientType = customDimensions.clientType
+, companyName = customDimensions.companyName
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+
+
+// Companion Table repair started
+traces
+| where timestamp > ago(7d)
+| where customDimensions has 'AL0000FJ1'
+| where customDimensions.eventId == 'AL0000FJ1'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, clientType = customDimensions.clientType
+, companyName = customDimensions.companyName
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+
+
+// Companion table repair completed successfully
+traces
+| where timestamp > ago(7d)
+| where customDimensions has 'AL0000FJ4'
+| where customDimensions.eventId == 'AL0000FJ4'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, clientType = customDimensions.clientType
+, companyName = customDimensions.companyName
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+
+
+// Cloud migration disabled
+traces
+| where timestamp > ago(7d)
+| where customDimensions has 'AL0000IGC'
+| where customDimensions.eventId == 'AL0000IGC'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, clientType = customDimensions.clientType
+, companyName = customDimensions.companyName
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+
+
+// Replication run started
+traces
+| where timestamp > ago(7d)
+| where customDimensions has 'AL0000K0J'
+| where customDimensions.eventId == 'AL0000K0J'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, clientType = customDimensions.clientType
+, companyName = customDimensions.companyName
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, alReplicationType = customDimensions.alReplicationType // possible values are Normal, Diagnostic, Full, Azure Data Lake
+
+
+// Replication run completed with failed tables
+traces
+| where timestamp > ago(7d)
+| where customDimensions has 'AL0000K0I'
+| where customDimensions.eventId == 'AL0000K0I'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, clientType = customDimensions.clientType
+, companyName = customDimensions.companyName
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, alReplicationType = customDimensions.alReplicationType // possible values are Normal, Diagnostic, Full, Azure Data Lake
+
+
+// Cloud Migration data upgrade scheduled
+traces
+| where timestamp > ago(7d)
+| where customDimensions has 'AL0000K0K'
+| where customDimensions.eventId == 'AL0000K0K'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, clientType = customDimensions.clientType
+, companyName = customDimensions.companyName
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+
+
+// Replication run completed
+traces
+| where timestamp > ago(7d)
+| where customDimensions has 'AL0000K0H'
+| where customDimensions.eventId == 'AL0000K0H'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, clientType = customDimensions.clientType
+, companyName = customDimensions.companyName
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, alReplicationType = customDimensions.alReplicationType // possible values are Normal, Diagnostic, Full, Azure Data Lake

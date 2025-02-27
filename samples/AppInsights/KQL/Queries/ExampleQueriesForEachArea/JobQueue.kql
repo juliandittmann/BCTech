@@ -1,45 +1,384 @@
 // KQL samples - Job Queue
 
-// Job queue entry enqueued (raw data)
+// The following events are emitted by the job queue system
+// | Event | Event id | 
+// | ----- | -------- | 
+// | Job queue entry enqueued | AL0000E24 | 
+// | Job queue entry failed to be enqueued |AL0000FNY | 
+// | Job queue entry started | AL0000E25 |
+// | Job queue entry finished | AL0000E26 |
+// | Job queue entry failed (will be retried) | AL0000HE7 |
+// | Job queue entry rescheduled on login | AL0000I49 |
+// | Job queue entry run once by a user | AL0000FMG |
+// | Job queue entry failed for the last time and is set to stopped | AL0000JRG |
+// | Job queue entry cancelled | AL0000KZV |
+
+// Job queue entry enqueued
 traces
 | where timestamp > ago(60d) // adjust as needed
-    and customDimensions.eventId == 'AL0000E24'
+| where customDimensions has 'AL0000E24' // for performance
+| where customDimensions.eventId == 'AL0000E24'
 | project timestamp
 , aadTenantId = customDimensions.aadTenantId
 , environmentName = customDimensions.environmentName
 , environmentType = customDimensions.environmentType
-, alJobQueueId = customDimensions.alJobQueueId 	
-, alJobQueueIsRecurring = customDimensions.alJobQueueIsRecurring 	
-, alJobQueueObjectId = customDimensions.alJobQueueObjectId 	
-, alJobQueueObjectType = customDimensions.alJobQueueObjectType
-, alJobQueueStatus = customDimensions.alJobQueueStatus
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName // added in 22.0 
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueEntry dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription // added in 22.2
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun // added in 21.5
 
 
-// Job queue entry started (raw data)
+// Job queue entry failed to be enqueued
 traces
 | where timestamp > ago(60d) // adjust as needed
-    and customDimensions.eventId == 'AL0000E25'
+| where customDimensions has 'AL0000FNY' // for performance
+| where customDimensions.eventId == 'AL0000FNY'
 | project timestamp
 , aadTenantId = customDimensions.aadTenantId
 , environmentName = customDimensions.environmentName
 , environmentType = customDimensions.environmentType
-, alJobQueueId = customDimensions.alJobQueueId 	
-, alJobQueueObjectId = customDimensions.alJobQueueObjectId 	
-, alJobQueueObjectType = customDimensions.alJobQueueObjectType
-, alJobQueueStatus = customDimensions.alJobQueueStatus
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName // added in 22.0 
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueEntry dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription // added in 22.2
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun // added in 21.5
 
 
-// Job queue entry finished (raw data)
+// Job queue entry started
 traces
 | where timestamp > ago(60d) // adjust as needed
-    and customDimensions.eventId == 'AL0000E26'
+| where customDimensions has 'AL0000E25' // for performance
+| where customDimensions.eventId == 'AL0000E25'
 | project timestamp
 , aadTenantId = customDimensions.aadTenantId
 , environmentName = customDimensions.environmentName
 , environmentType = customDimensions.environmentType
-, alJobQueueId = customDimensions.alJobQueueId 	
-, alJobQueueObjectId = customDimensions.alJobQueueObjectId 	
-, alJobQueueObjectType = customDimensions.alJobQueueObjectType
-, alJobQueueStatus = customDimensions.alJobQueueStatus
-, alJobQueueExecutionTimeInMs = customDimensions.alJobQueueExecutionTimeInMs
-, alJobQueueResult = customDimensions.alJobQueueResult
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName // added in 22.0 
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueEntry dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription // added in 22.2
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun // added in 21.5
+// jobQueueExecution dimensions contain information about the attempted run of the job queue entry
+, jobQueueExecutionNumberOfAttemptsToRun = customDimensions.alJobQueueNumberOfAttemptsToRun // added in 21.5
+, jobQueueExecutionStatus = customDimensions.alJobQueueStatus
+, jobQueueExecutionTaskId = customDimensions.alJobQueueScheduledTaskId // you can join to task scheduler telemetry on the taskId
+
+
+// Job queue entry finished
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000E26' // for performance
+| where customDimensions.eventId == 'AL0000E26'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName // added in 22.0 
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueEntry dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription // added in 22.2
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun // added in 21.5
+// jobQueueExecution dimensions contain information about the attempted run of the job queue entry
+, jobQueueExecutionNumberOfAttemptsToRun = customDimensions.alJobQueueNumberOfAttemptsToRun // added in 21.5
+// job queue status dimension was renamed in 20.0
+// do not use the dimension alJobQueueResult as this will be removed in the future
+// , alJobQueueStatus = customDimensions.alJobQueueResult // prior to 20.0
+// , alJobQueueStatus = customDimensions.alJobQueueStatus // 20.0 or later
+// question for the team: why is status == Ready for this event?
+, jobQueueExecutionStatus = iff( isempty(customDimensions.alJobQueueStatus), customDimensions.alJobQueueResult, customDimensions.alJobQueueStatus )
+, jobQueueExecutionTimeInMs = customDimensions.alJobQueueExecutionTimeInMs
+, jobQueueExecutionTaskId = customDimensions.alJobQueueScheduledTaskId // you can join to task scheduler telemetry on the taskId
+
+
+// Job queue entry failed
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000HE7' // for performance
+| where customDimensions.eventId == 'AL0000HE7'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName // added in 22.0 
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueExecution dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription // added in 22.2
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun // added in 21.5
+// jobQueueExecution dimensions contain information about the attempted run of the job queue entry
+, jobQueueExecutionNumberOfAttemptsToRun = customDimensions.alJobQueueNumberOfAttemptsToRun // added in 21.5
+, jobQueueExecutionStacktrace = customDimensions.alJobQueueStacktrace
+, jobQueueExecutionStatus = customDimensions.alJobQueueStatus
+, jobQueueExecutionTaskId = customDimensions.alJobQueueScheduledTaskId // you can join to task scheduler telemetry on the taskId
+
+
+// Job queue entry rescheduled on login: {guid}
+// Introduced in version 22.0
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000I49' // for performance
+| where customDimensions.eventId == 'AL0000I49'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName // added in 22.0 
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueEntry* dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription // added in 22.2
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun // added in 21.5
+// jobQueueExecution* dimensions contain information about the attempted run of the job queue entry
+, jobQueueExecutionNumberOfAttemptsToRun = customDimensions.alJobQueueNumberOfAttemptsToRun // added in 21.5
+, jobQueueExecutionStatus = customDimensions.alJobQueueStatus
+, jobQueueExecutionTaskId = customDimensions.alJobQueueScheduledTaskId // you can join to task scheduler telemetry on the taskId
+// jobQueueRescheduled* dimensions contain information about the rescheduling of the job queue entry
+, jobQueueRescheduledEarliestStartDateTime = customDimensions.alJobQueueEarliestStartDateTime
+, jobQueueRescheduledNewTask = customDimensions.alJobQueueRescheduledNewTask
+
+
+// Emitted when the "Run once (Foreground)" action is clicked in Job Queue Entries/Card pages
+// Used to see which JQs were run in the foreground specifically through the JQ pages
+// Introduced in v22.2
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000FMG' // for performance
+| where customDimensions.eventId == 'AL0000FMG'
+// the AL0000FMG event is available from 22.2. In earlier versions, the event was not quite ready
+| where customDimensions.extensionVersion !startswith "19."   and 
+        customDimensions.extensionVersion !startswith "20."   and
+        customDimensions.extensionVersion !startswith "21."   and
+        customDimensions.extensionVersion !startswith "22.0." and 
+        customDimensions.extensionVersion !startswith "22.1."
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName 
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueExecution dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription 
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun 
+
+
+
+// Emitted when the job queue entry fails for the very last time before being set in `Error` state.
+// This is used for administrators to know how many job queue entries are going into the final failed state and require manual intervention (restarting etc).
+// introduced in v21.5 
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000JRG' // for performance
+| where customDimensions.eventId == 'AL0000JRG'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName // added in 22.0 
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueExecution dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription // added in 22.2
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun // added in 21.5
+// jobQueueExecution dimensions contain information about the attempted run of the job queue entry
+, jobQueueExecutionNumberOfAttemptsToRun = customDimensions.alJobQueueNumberOfAttemptsToRun // added in 21.5
+, jobQueueExecutionStatus = customDimensions.alJobQueueStatus
+, jobQueueExecutionStacktrace = customDimensions.alJobQueueStacktrace
+, jobQueueExecutionTaskId = customDimensions.alJobQueueScheduledTaskId // you can join to task scheduler telemetry on the taskId
+
+
+// Job queue entry cancelled 
+// introduced in v23.0 
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000KZV' // for performance
+| where customDimensions.eventId == 'AL0000KZV'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName 
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueExecution dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription 
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun 
+// jobQueueExecution dimensions contain information about the attempted run of the job queue entry
+, jobQueueExecutionNumberOfAttemptsToRun = customDimensions.alJobQueueNumberOfAttemptsToRun // added in 21.5
+, jobQueueExecutionTaskId = customDimensions.alJobQueueScheduledTaskId // you can join to task scheduler telemetry on the taskId
+
+
+
+// join job queue telemetry with task scheduler telemetry to learn more about the root cause of the error
+let job_queue_errors = 
+traces
+| where timestamp >= ago(30d) // adjust as needed
+| where customDimensions.eventId == 'AL0000HE7'
+| where customDimensions has 'AL0000HE7' // for performance
+| where isnotempty(customDimensions.aadTenantId) // filter away signal from Docker sandboxes
+| extend 
+  AadTenantId = tostring( customDimensions.aadTenantId )
+, CompanyName = tostring( customDimensions.companyName )  
+, EnvironmentName = tostring( customDimensions.environmentName )
+, EnvironmentType = tostring( customDimensions.environmentType )
+, ObjectId = toint(customDimensions.alJobQueueObjectId)
+| extend TenantId = strcat( toupper(AadTenantId), toupper(EnvironmentName) )
+| project timestamp
+, AadTenantId, EnvironmentName, CompanyName, EnvironmentType, TenantId
+, PlatformVersion = tostring( customDimensions.componentVersion )
+, ObjectId
+, ObjectType = customDimensions.alJobQueueObjectType
+, ObjectName = customDimensions.alJobQueueObjectName // added in 22.0 
+, ObjectDescription = customDimensions.alJobQueueObjectDescription // added in 22.2
+, CodeOwnershipKey = case(
+      ObjectId between (50000 .. 99999), 'ENVIRONMENT'
+    , ObjectId between (1000000 .. 69999999), 'ISV_ONPREM'
+    , ObjectId between (70000000 .. 74999999), 'ISV_ONLINE'
+    , 'MICROSOFT'
+)
+, TaskId = tostring( customDimensions.alJobQueueScheduledTaskId )
+, ALStacktrace = customDimensions.alJobQueueStacktrace
+;
+let task_scheduler_errors = 
+traces
+| where timestamp >= ago(30d) // adjust as needed
+| where customDimensions.eventId == 'LC0045'
+| project TaskId = tostring( customDimensions.taskId )
+, exception = customDimensions.failureReason
+, retryMessage = tostring( customDimensions.retryMessage )
+| extend exceptionIsRetriable = case (
+    retryMessage has 'Exception is not retriable', false
+  , retryMessage has 'Exception is retriable', true
+  , false
+)
+| project-away retryMessage 
+;
+job_queue_errors
+| join kind=leftouter task_scheduler_errors on $left.TaskId == $right.TaskId
+| project-away TaskId, TaskId1
+
+
+
+// List all the job queue status events
+traces
+| where timestamp > ago(1d) // adjust as needed
+| where (customDimensions has 'AL0000E24') or (customDimensions has 'AL0000HE7') or (customDimensions has 'AL0000E25')  or (customDimensions has 'AL0000E26')  or (customDimensions has 'AL0000HE7') or (customDimensions has 'AL0000I49') or (customDimensions has 'AL0000FMG') or (customDimensions has 'AL0000JRG') or (customDimensions has 'AL0000KZV')// for performance
+| where (customDimensions.eventId == 'AL0000E24') or (customDimensions.eventId == 'AL0000FNY') or (customDimensions.eventId == 'AL0000E25')  or (customDimensions.eventId == 'AL0000E26')  or (customDimensions.eventId == 'AL0000HE7')  or (customDimensions.eventId == 'AL0000I49')  or (customDimensions.eventId == ' AL0000FMG')  or (customDimensions.eventId == 'AL0000JRG')  or (customDimensions.eventId == 'AL0000KZV')
+| project timestamp
+, eventId = customDimensions.eventId
+// jobQueueObject* dimensions contains the information about the object containing the code being run
+, jobQueueObjectId = customDimensions.alJobQueueObjectId 	
+, jobQueueObjectName = customDimensions.alJobQueueObjectName // added in 22.0 
+, Status = case(
+      customDimensions.eventId == 'AL0000E24', 'Enqueued'
+      ,customDimensions.eventId == 'AL0000FNY', 'Failed to be enqueued'
+      ,customDimensions.eventId == 'AL0000E25', 'Started'
+      ,customDimensions.eventId == 'AL0000E26', 'Finished'
+      ,customDimensions.eventId == 'AL0000HE7', 'Failed (will be retried)'
+      ,customDimensions.eventId == 'AL0000I49', 'Rescheduled on login'
+      ,customDimensions.eventId == 'AL0000FMG', 'Run once by a user'
+      ,customDimensions.eventId == 'AL0000JRG', 'Failed for the last time and is set to stopped'
+      ,customDimensions.eventId == 'AL0000KZV', 'Cancelled'
+    , '??Not hardcoded??'
+)
+, jobQueueObjectType = customDimensions.alJobQueueObjectType
+// jobQueueEntry dimensions contain information about the job queue entry definition
+, jobQueueEntryId = customDimensions.alJobQueueId 	
+, jobQueueEntryIsRecurring = customDimensions.alJobQueueIsRecurring
+, jobQueueEntryDescription = customDimensions.alJobQueueObjectDescription // added in 22.2
+, jobQueueEntryMaxNumberOfAttemptsToRun = customDimensions.alJobQueueMaxNumberOfAttemptsToRun // added in 21.5
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// jobQueueApp* dimensions contains the information about the app where the jobQueueObject* is located
+, jobQueueAppId = customDimensions.alCallerAppId
+, jobQueueAppName = customDimensions.alCallerAppName
+, jobQueueAppPublisher = customDimensions.alCallerPublisher
+, jobQueueAppVersion = customDimensions.alCallerAppVersion

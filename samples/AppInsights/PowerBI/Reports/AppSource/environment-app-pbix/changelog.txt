@@ -1,0 +1,368 @@
+Welcome to the release notes for the usage app on Business Central environment telemetry.
+
+Below, you can see 
+1) ideas for upcoming releases, 
+2) the current state of vNext (the next version to be released), and 
+3) release notes for all released version of the app since the initial release on appsource back in April 2022.
+
+
+-------------
+Pending teams
+-------------
+* Database deadlocks page: need to fix URL (hide) for user telemetry id (unblocked in 23.1/23.2)
+* Usage: Add user telemetry id to pageview pages and allow filters on this (when available in client telemetry)
+Url (in v24)
+https://businesscentral.dynamics-tie.com/?page=774&filter='Telemetry User ID' IS '<telemetry ID>'
+* Usage: add role dimension to page views (when available in client telemetry)
+* Usage: log search terms (opt-in) (when available in client telemetry)
+* Usage: add license type on sessions page (pending bug fix from server team)
+* Administration: Permission set changes (pending app team on adding permission set name)
+
+
+-----
+Ideas
+-----
+* Usage: Feature uptake page
+* Errors: Show successful/failed authentication calls joined to web service telemetry to extract endpoint, http headers
+* Errors: cross tenant comparisons of errors (is this normal?)
+* Performance: cross tenant comparisons of performance (is this normal?)
+* Performance: Recurring job queue jobs with long running SQL/AL/locks
+* Performance: Database wait statistics page
+* Performance: outgoing ws calls happening while session is taking database locks/in a write transactions
+* Use KQL functions for user analytics: https://learn.microsoft.com/en-us/azure/data-explorer/kusto/query/useranalytics
+* Dataset: EventStatistics table, refactor to use TenantHashQuerySnippet
+* Business event telemetry
+
+
+Possible bugs
+The "Last 7 days" and "Since Yesterday" values in "Outgoing Web Service Errors" are not calculated correctly. I filtered the dashboard to show only the last 4 days (and I know that 69 of these errors are from today) so it should show all 104 in the last 7 days and 69 in since yesterday)
+Seems like this issue has more pages, at least
+* Feature errors
+* Outgoing WS errors
+
+On Environment Inventory report: "Is Updated" and "Is Deleted" predicates needs to be updated.
+See example https://www.yammer.com/dynamicsnavdev/#/threads/show?threadId=2567423155871744
+
+
+------------------
+vNext (implemented, coming in the next release, probably available in the beta app)
+Install beta app from: https://aka.ms/bctelemetryreportbeta
+------------------
+
+
+------------------
+2025-12-12 release
+------------------
+* Bug fixed: DAU/WAU/MAU query did not respect ago parameter
+* Bug fixed: 1d/7d count measures now work for incoming web service errors
+* Bug fixed: data load works also when a LOT of web service metadata errors are present
+ 
+
+
+------------------
+2024-02-07 release
+------------------
+* Bug fixed: missing Entra/AAD in global environment slicer
+
+
+------------------
+2024-02-04 release
+------------------
+* Dataset: Introduced ClientInfoDim and refactored queries ClientBrowserUsageQuery to use this
+
+
+------------------
+2023-12-01 release
+------------------
+* Bug fixed: refresh error if you had query usage in the UI and also other signal on those queries
+* Errors: new page 'Per-Tenant Extension upload validation diagnostics'. Shows all diagnostics for extensions that failed to be uploaded to Business Central from the Extensions Management page.
+* Administration: Retention policy changes page
+* Administration: New page on PTE upload validations signal. 
+
+
+------------------
+2023-11-01 release
+------------------
+* Bug fixed: On Job queue errors page, url now works (was missing a "?")
+* Bug fixed: App slicer now sync across all pages in each report (cannot sync across reports)
+* Bug fixed: MAU query timed out. New query is now partitioned to load data in 5 parallel streams.
+* All pages: AAD renamed to Entra
+* Usage: new page 'Queries'. Shows all usage of data analysis on queries.
+* Usage: on page Reports, it is now possible to filter on usage of the Financial reporting (aka account schedules) feature
+* Errors: new page 'Environment extension validation diagnostics'. Shows all diagnostics for extensions that needs to be fixed before upgrading to the next version of Business Central.
+* Errors: on page Report Errors, added new visual on what the user did. Also fixed bug where report errors only showed cancelled reports, not exceptions.
+* Errors: on page outgoing web service errors, added HTTP details to HTTP status visual. Also added new HTTP filter possibilities.
+* Errors: on all pages, added links to documentation and troubleshooting guide
+* Administration: new page 'Change log lifecycle'. Shows all lifecycle events (add/remove/change) for fields in the changelog feature.
+* Administration: on page 'Environment lifecycle', added events LC0156
+* Administration: New page on PTE validations signal. 
+
+
+------------------
+2023-10-01 release
+------------------
+* Administration: new page 'Job Queue'. Shows all events on job queue, including the new event AL0000KZV, Job queue entry task cancelled
+
+
+------------------
+2023-09-08 release
+------------------
+* Bug fixed: Timezone values are wrong (all positive)
+* Bug fixed: example data for parameter Environment include list had syntax error
+* Bug fixed: login errors showed wrong number. Needed to remove userType and guestUser dimensions from failures in OnCompanyOpen.
+* On all four reports (Usage, Errors, Performance, and Administration): Added global filters on environment version (full and short)
+* Usage: On page 'Feature Usage', data can now be filtered with filters from the AppDim dimension
+* Usage: On page 'Onboarding' (need to change format of date dimensions)
+* Errors: On page FeatureErrors, refactored model to use callstack dimension. Switched to using TenantHash for environment dim reference. Added top/bottom parsing visuals for the AL stack trace. 
+* Errors: On page Job queue errors, we now show if the job queue entry has been stopped (event AL0000JRG)
+
+
+------------------
+2023-08-06 release
+------------------
+* Dataset: Updated connector dimension and predicates with new values for 'Power BI (Desktop)', 'PowerQuery Online', 'Power BI (Gateway)', 'Power BI (Online)', 'Power BI (UnknownHost)'
+* Dataset: Introduced new dimensions for Urls and HTTP status codes, added apps from AL telemetry to AppDim
+* Errors: On all pages, added a nice banner in green if no errors are present.
+* Errors: New page showing Azure Function failures
+* Errors: New page 'Webservice metadata errors' (for data coming in 22.2)
+* Errors: On page 'Connector errors', added filters on HTTP status type and HTTP status error, added new visuals to show call (HTTP) status statistics and details. 
+* Errors: Added support for new SMTP error signal that was added in 22.3, tuned the query to use EnvironmentDim, Also fixed width bug on report.
+* Errors: On page 'Incoming web service call errors', added filters on HTTP status type and HTTP status error, added new visuals to show call (HTTP) status statistics and details. Also now ships a nice banner in green if no errors are present.
+* Errors: On page 'Outgoing web service call errors', added filters on host and url, now using UrlDimension (so slightly faster data loading), added new visuals to show call (HTTP) status statistics and details. 
+* Errors: On page 'Job Queue Errors', improved guidance section, added cues to spot recurring failing job queue jobs and jobs that fail with non-retriable exceptions
+* Errors: On page 'Feature Errors', data can now be filtered with filters from the AppDim dimension
+* Performance: On page 'Outgoing web service call performance', added filters on host and url, now using UrlDimension (so slightly faster data loading), added new visuals to show call (HTTP) status statistics and details. 
+* Performance: On page 'Incoming web service call performance', added filters on HTTP status type and HTTP status error, added new visuals to show call (HTTP) status statistics and details. 
+* Administration: 'Data in telemetry' page, updated with BCPT and cloud migration events
+
+
+------------------
+2023-07-06 release
+------------------
+* Dataset: New "Tenant / Environment / Type" hierarchy on Environment dimension
+* Dataset: New web service metadata error signal (RT0035, RT0036, and RT0038)
+* Usage: New page (for 22.2) 'Onboarding'
+* Errors: On page JobQueueErrors, added dimensions alJobQueueObjectName and alJobQueueDescription to visuals and filters. Introduced a hierarchy on object name/id/type/description. Changed exceptions visual to use a matrix visual.
+* Performance: On page JobQueuePerformance, added dimension alJobQueueObjectName and alJobQueueDescription to visuals and filters. Introduced a hierarchy on object name/id/type/description.
+* Performance: On page Long Running AL, added visual on new dimensions sqlExecutes and sqlRowsRead and to filters
+
+
+------------------
+2023-06-22 release
+------------------
+* Dataset: On JobQueuePerformance, tuned data load and moved tenant info into its own dimension.
+* Errors: On page IncomingWebserviceErrors, added two new visuals. First one shows the new OData error dimensions 'Failure Reason' and 'Diagnostic Message'. The second one shows the User Agent set by the caller.
+* Errors: On page ConnectorErrors, added new visual to show new OData error dimensions 'Failure Reason' and 'Diagnostic Message'
+* Performance: On all pages, added overview section with AI visuals and top 10 avg. 
+* Performance: On page 'Incoming Web Service performance', added calculations on queue time (introduced in telemetry in v22)
+* Performance: On page 'Long Running AL', use new dimension exclusiveTime (this dimension was introduced in 21.6/22.0)
+* Performance: (in 22.0/22.1) On page 'Database lock timeouts', added isolationLevel to SQL visual
+* Administration: New page (22.1) 'Cloud Migration'
+
+
+------------------
+2023-05-01 release
+------------------
+* Dataset: On ExtensionUpdatePerformance, tuned data load and moved tenant info + extension info into their own dimensions.
+* Dataset: On IncomingWebserviceErrors, tuned data load and moved tenant info, extension info, category, connector info, and object info into their own dimensions.
+* Dataset: On ReportErrors, tuned data load and moved tenant info, extension info, client info, and object info into their own dimensions.
+* Dataset: On BCPTRuns, fixed duplicate key error
+* Errors: fixed AL stacktrace visuals that did not filter
+* Errors: On page 'Incoming Webservice Errors', added per-app/per-object visuals.
+* Errors: On page 'Connector Errors', added per-app/per-object visuals.
+* Errors: On page 'Report Errors', add per-app/per-object visuals.
+* Errors: on 'Database deadlocks' page, add top/bottom stacktrace visuals
+* Performance: On page app updates, changed visuals to use a matrix
+* Performance: On page 'Reports', added visual to show time to generate dataset and render the report.
+* Administration: On page 'Company changes', added user id
+
+
+------------------
+2023-04-05 release
+------------------
+* Dataset: On OutgoingWebServiceErrorsQuery, OutgoingWebServicePerformanceQuery, optimized data load and introduced AL stacktrace
+* Dataset: On ConfigurationPackages, tuned data load and moved tenant info, operation type, and client type into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Dataset: Fixing bug in data loading if telemetry has BCPT data prior to 21.3 (BCTech GitHub Issue #188).
+* Dataset: On table ErrorMessageVotes, moved stacktrace, tenant infom and client type into their own dimensions.
+* Dataset: On tables JobQueueErrors and Locktimeouts moved stacktrace to the stacktrace dimension
+* Dataset: On table PermissionErrors, moved environment info, extension info, object info, stacktrace, and client type to their own dimensions
+* Dataset: On table ErrorDialogs, moved environment info, extension info, object info, stacktrace, and client type to their own dimensions
+* Dataset: On CompanyLifecycle table, added new Company Initialized event (available in 22.0)
+* Usage: New page (for 22.0) 'Client actions'
+* Errors: On page OutgoingWebServiceErrors, added AL stacktrace visual and top/bottom of the stacktrace
+* Errors: On page 'Error dialogs', also show error message in English (available from 21.4), added per-app/per-object visuals.
+* Errors: On page 'Error Messages' page, added visuals for top/bottom of AL call stack 
+* Errors: On page 'Permission Errors' page, add visuals for top/bottom of AL call stack, added filter to check if an error happened in a Job Queue entry run and filter to check if an error happened in OnCompanyOpen. 
+* Errors: On page 'Job Queue Errors' page, added visuals for top/bottom of AL call stack, added visuals for top/bottom of stacktrace
+* Errors: On page 'Configuration Packages Errors', added indicator if no errors are shown. Fixed filters.
+* Performance: On 'Lock timeouts' page, added filter to check if an operation happened in a Job Queue entry run and filter to check if lock timeout happened in OnCompanyOpen, and filter to check if lock timeout happened in a number series.
+* Performance: On page OutgoingWebServicePerformance, added AL stacktrace visual and top/bottom of the stacktrace
+* Performance: On the slow logins page, added visuals on outgoing ws call and on lock timeouts happening in the OnCompanyOpen trigger
+* Performance: Cleared/fixed environment filters on all pages
+* Performance: On page 'Configuration Packages', added min/max measures to the statistics visual. Fixed filters.
+* Administration: New page 'Feature management' added (for 22.0)
+* Administration: New page 'Permission changes' added (for 22.0)
+
+
+------------------
+2023-03-01 release 
+------------------
+* Dataset: On table SQLDeadlocks, Added user telemetry id and URL to the User card in BC. Tuned data load and moved object info, extension info, sql details, stacktrace, and client type into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Dataset: On table LockTimeouts, introduced sqlHashDim
+* Dataset: On table LongRunningSQLQueries, tuned data load (introduced hash partitions) and moved stacktrace and client type into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases). Added 'are you missing a SetCurrentKey?' to SQL explanation
+* Dataset: On table LongRunningAL, tuned data load (introduced hash partitions) and moved object, extension, stacktrace and client type into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Dataset: On table IncomingWebServicePerformance, tuned data load (introduced hash partitions) and moved connector type, and category into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Dataset: On table ReportPerformance, tuned data load (introduced hash partitions) and moved connector type, and category into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Dataset: On tables EnvironmentLifecycle, EnvironmentLifecycleErrors, ExtensionLifecycle, ExtensionLifecycleErrors, IndexLifecycle, CompanyLifecycle, FieldChanges, RententionPolicyDeletes: tuned queries to run faster (introduced TenantHash)
+* Dataset: On table TaskSchedulerErrors, added support for new signal 'Task timeout changed because it was exceeding the max timeout value'. Also tuned query (introduced TenantHash)
+* Dataset: On table TaskSchedulerPerformance, tuned query (introduced TenantHash, moved to 1h bins).
+* Usage report: On pages 'Page views' 'Reports', 'Feature Usage', 'Checklist usage', 'Integrations', 'Connectors', and 'Deprecated features' added per environment visual
+* Usage report: new page 'MAU/WAU/DAU' showing Monthly/Weekly/Daily users based on the user_Id column in Application Insights
+* Performance report: On page 'Pageviews', added per-app/per-object visuals
+* Performance report: On page 'Outgoing webservice calls', added client type. Also added per-app/per-object visuals.
+* Error report: On page 'SQL deadlocks', added user telemetry id visual
+* Error report: On page 'Environment lifecycle Errors', added support for failed soft delete and recovery (un-delete) operations
+* Error report: On page 'Job Queue Errors', added AL stacktrace (introduced in telemetry in version 21.3)
+* Administration report: On page 'Environment lifecycle', added support for soft delete and recovery (un-delete) operations
+* Administration report: On page 'Sensitive fields monitoring', added link to change log entries. Also added visuals to see changes by company/table/field, by table/field/company, by time of day and by day of the week 
+
+
+------------------
+2023-02-01 release
+------------------
+* Usage: On page 'Deprecated features' - show different icon/text if no data is available
+* Usage: On page 'Clients', changed 'Browser statistics' visual to a matrix
+* Usage: integrations page, added visual to show outgoing calls by host
+* Performance: On page 'Long running SQL queries', improvements to explanation
+* Errors: On all pages, added visuals to show count last day, last week, older
+* Errors: On page 'login errors' page, add link to TSG on docs, show different text if no data is available
+* Errors: About the report, missing link to error message votes KQL sample url
+* Dataset: Tuned data load for PageViewPerformance. Partitioned load into 24 hour partitions. Moved client info (screen size, language, locale, ..) and client type into their own tables. This will allow the app to load more pageview data (for bigger telemetry databases).
+* Dataset: Tuned data load for ReportPerformance. Moved payload info (layout, report format/action, ..) and client type into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Dataset: Fixed missing values in http method dimension
+
+
+------------------
+2023-01-03 release
+------------------
+* Errors: Job Queue errors - added link to Page 673 'Job Queue Entry Card' in Business Central (Online) with filter on ID
+* Performance: On page 'Environment updates', added Date/time and fixed broken analyze in KQL visual
+* Performance: On page 'Long Running SQL queries', tuned data load, fixed broken analyze in KQL visual, added per-app/per-object visuals, added explanation for SQL queries
+* Performance: new page showing Performance Toolkit (BCPT) data.
+* Performance: On page 'Outgoing webservice calls', tuned data load, added min/max measures on execution time, changed ws by http code visual to show data by response type.
+* Performance: on page 'Reports', tuned data load. Also added per-app/per-object visuals and added sum time. Enhanced description with better tuning advice.
+* Dataset: Tuned data refresh to allow for 30 min data loads per query. Also using 'set notruncation;' in all KQL queries to remove 500k row limits
+* Dataset: Tuned data load for queries PageViewPerformance, IncomingWebServicePerformance, FeatureUsage, AuthenticationWithWebServiceKey, FeatureErrors, IncomingWebServiceErrors, ExtensionLifeCycle
+
+
+------------------
+2022-12-01 release
+------------------
+* Usage: On page 'Application area', Added new visual 'Application area usage by Environments'
+* Usage: On pages 'Page views', 'Reports', and 'Feature Usage', Added new visuals 'X by Publisher' and 'X by Extension Version'
+* Performance: on page 'Long running SQL', added visual with info on aad tenants impacted
+* Performance: New page added: Performance events
+* Performance: New page added: Environment updates
+* Errors: on page 'Error dialogs', added visuals with info on top/bottom line of the stack trace
+* Errors: on page 'Job Queue Errors', added visual with detailed info (including job id and task id) for further troubleshooting
+* Administration: on Configuration page, changed order of parameter visuals, added EnvironmentDim visual
+* All four reports: turned on ability to download underlaying data from all visuals
+* All four reports: turned on to analyze further with KQL on all pages
+* Dataset: tuned all KQL queries. Impact is up to 5x faster refresh time.
+
+
+------------------
+2022-11-07 release
+------------------
+* Administration report: Added hierarchy, message details, and feature telemetry dimension for events on telemetry event statistics page
+* Administration report: New page 'Configuration' to show how the app has been configured.
+* Usage report: Added per-environment and page-views per date visuals on Locations page.
+* Usage report: fixed bug on Connector page (showed also non-connector data). Also minor adjustments to visuals.
+* Usage report: fixed bug on Integrations page (number of calls was wrong)
+* Performance report: Added number of columns and if query take locks to SQL statements visual on Long Running SQL page
+* Performance: on pages 'Database lock timeouts', 'Long running SQL', and 'Long running AL' added visual with info on top line of the stack trace
+* Performance: on pages 'Outgoing ws', 'Incoming ws', 'Long running SQL', and 'Long running AL' changed sums to show data in seconds and adjusted avg to show ms with no decimals.
+* Dataset: AAD tenant mapping more stable against json syntax errors
+
+
+------------------
+2022-10-10 release
+------------------
+* Usage report: New page 'Application areas', shows usage by main application area in the base app
+* Usage report: on the 'Page views' page, filter out pages with id=-1 by default 
+* Error report: GitHub issue #148 Fixed wrong web service key error count on the error dashboard. 
+* Error report: GitHub issue #148 Fixed wrong web service login error count on the error dashboard. 
+* Error report: Added two new tiles on the error dashboard: background session login failures and license errors
+* Error report: on basic auth error page, added http details visual
+* Error report: on login errors page, added info about session type (UI, WS, or background)
+* Dataset: fixed min/max in Dates dimension (some day-of-week visuals showed empty weekday)
+* Dataset: added support for defining an include list of environments
+           Format is {"include":[{"AAD tenant id":"<aad tenant id 1>","Name":"<environment name 1>"}, {"AAD tenant id":"<aad tenant id 2>","Name":"<environment name 2>"}]}
+* Performance: on Database lock timeouts page, added environment visual, fixed alignment on other visuals
+* Performance: on Sessions page, added environment visual, added session type to per-client visual
+* Performance: on pages "Database lock timeouts", "Long running SQL", and "Long running AL", added visual with info on bottom line of the stack trace
+
+
+------------------
+2022-09-23 release
+------------------
+* Usage report: fixed links on the 'About the report' page
+* Usage report: split Sessions by User and Client Type visual into two: Sessions by User and Sessions by Client Type on the 'Sessions' page
+* Usage report: added browser version visual to the 'Client' page
+* Usage report: added Feature usage by Publisher and Extension Version to the 'Feature Usage' page
+* Usage report: added object and http return code/header visuals to the 'Deprecated Features' page
+* Error report: added exception and extra visuals to the Job Queue Error page
+
+
+------------------
+2022-09-09 release
+------------------
+* Usage report: fixed visual width on web service key page
+* Usage report: new visual on connector page: usage by connector
+* Usage report: new visual on integrations page: integrations by publisher / extension
+* Usage report: adjusted visuals sizes and canvas size on Clients page
+* Usage report: environment slicers now sync between all pages
+* Error report: added per-environment visuals on all pages
+* Error report: fixed per-date visual on SQL Deadlocks page
+* Error report: fixed wrong publisher on by-publisher visual on Report Errors page
+* Error report: environment slicers now sync between all pages
+* Performance report: added environment-information on OnCompanyOpen page
+* Performance report: fixed bug in dataset for job queue performance
+* Performance report: environment slicers now sync between all pages
+* Administration report: environment slicers now sync between all pages
+
+
+------------------
+2022-09-04 release
+------------------
+* Usage report: Deprecated features page- added per-environment overview visual, fixed page filters to show the fields on the page
+* Usage report: connector page now also shows edit in excel and power app/automate setup trafic
+* Usage report: new page showing check list usage and state changes
+* Usage report: zoom slicers added to all date visuals
+* Performance report: added Host on Outgoing Web services page
+* Performance report: zoom slicers added to all date visuals
+* Performance report: bug fix - Job queue performance page now loads data also for versions of BC 20.0 or later
+* Performance report: new page showing performance of updates
+* Performance report: bug fix - Fixed bug in SQLDeadlocks relation to Date dim
+* Error report: added Host on Outgoing Web services page
+* Error report: Possible to filter on user telemetry id on pages Error dialogs, Feature errors, and Permisison Errors
+* Error report: zoom slicers added to all date visuals
+* Administration report: new page showing field changes (from the sensitive field monitoring feature)
+* Administration report: new page showing retention policy deletes (from the retention policy feature)
+* Administration report: new page showing telemetry event statistics
+
+
+------------------
+2022-07-15 release
+------------------
+* All report pages: Environment dimension and visuals on top: fixed bug when telemetry resource hold both per-environment 
+  and per-app telemetry
+* All report pages: All time-of-day visuals now show timezone as part of the header
+* Usage report: fixed visual width bug on connections page
+* Performance report: added visual for SQL statements on Long running SQL queries page
+
+
+------------------
+2022-07-04 release
+------------------
+Initial release of the app on appsource

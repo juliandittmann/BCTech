@@ -1,8 +1,8 @@
 # Introduction
 
-The [Business Central Administration Center](https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/tenant-admin-center) can be used for managing Business Central environments.
+The [Business Central Administration Center](https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/tenant-admin-center) can be used for managing Business Central environments.
 
-There is a corresponding [Business Central Administration Center API](https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/administration-center-api), which can be used e.g. for automating management processes.
+There is a corresponding [Business Central Administration Center API](https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/administration-center-api), which can be used e.g. for automating management processes.
 
 This repo contains code samples that are intended to get you started using the APIs.
 
@@ -10,9 +10,9 @@ There is also an explanation of [Authenticating to the Business Central Admin Ce
 
 
 
-## Specifically for Delegated Admins
+## Specifically for Delegated Admins (GDAP)
 
-If you are a partner who has a reseller relationship to one or more customers, also known as a delegated admin, you can also use the APIs to manage your *customers'* Business Central environments.
+If you are a partner and have a GDAP (Granular Delegated Admin Privileges) relationship to one or more customers, you can also use the APIs to manage your *customers'* Business Central environments.
 
 There is a dedicated section that covers [how to call Partner Center APIs](PowerShell/PartnerCenter.ps1), which e.g. can be used to list all your customers.
 

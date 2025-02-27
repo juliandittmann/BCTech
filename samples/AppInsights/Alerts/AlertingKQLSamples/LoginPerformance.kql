@@ -1,0 +1,50 @@
+// Use queries like this as a condition in an alert on long logins
+
+// logins that take longer than 5 seconds
+// this query only works on environment telemetry
+traces
+| where customDimensions.eventId == "RT0004" 
+| project aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, clientType = customDimensions.clientType
+, companyName = customDimensions.companyName
+, executionTimeInMS = toreal(totimespan(customDimensions.serverExecutionTime))/10000
+| where executionTimeInMS > 5000 // change to a threshold that makes sense to your organization
+
+
+// outgoing webservice calls from the login events
+//
+// These are blocking calls as seen from AL execution. 
+// Until they are completed, the session creation will wait. For interactive sessions, the user will see a spinner. 
+// For web service calls (SOAP, OData or API) or background sessions (job queue, scheduled tasks, page background tasks) they will not start executing until the call completes. 
+//
+// If you are a VAR, contact the extension publisher if you see high average or max values
+//
+// If you are an ISV, set a decent timeout on the HttpClient call and design your AL solution in a way that still works if the call times out.
+// Also, you might want to monitor and maybe tune the endpoint performance.
+traces
+| where customDimensions.eventId == 'RT0019'
+//| where TIMESTAMP > ago(1d) // adjust as needed
+| where isnotempty( customDimensions.alStackTrace ) // RT0019 only has stacktrace from 20.1
+| extend StackTrace = tostring( customDimensions.alStackTrace )
+, executionTimeInMs = toreal(totimespan(customDimensions.serverExecutionTime))/10000 //the datatype for executionTime is timespan
+, environmentType = tostring( customDimensions.environmentType )
+// uncomment this if you obly care about production environments
+//| where environmentType == 'Production'
+| where StackTrace has 'OnCompanyOpen' or StackTrace has 'OnCompanyOpenCompleted'
+| summarize count() // how many calls
+, sum(executionTimeInMs) // sum of delays for session creations (all session types are affected: UI, web service, background, ...) 
+, avg(executionTimeInMs) // average session creation time delay by this app
+, max(executionTimeInMs) // average session creation time delay by this app
+by bin(timestamp, 1d)
+// which environment is affected
+// uncomment this block out if you want to alert across environments
+// , aadTenantId = tostring( customDimensions.aadTenantId )
+// , environmentName = tostring( customDimensions.environmentName )
+// , environmentType 
+//
+// which app is calling out from OnCompanyOpen?
+, extensionId = tostring( customDimensions.extensionId )
+, extensionName = tostring( customDimensions.extensionName )
+, extensionVersion = tostring( customDimensions.extensionVersion )

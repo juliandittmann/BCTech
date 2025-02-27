@@ -1,26 +1,101 @@
 // KQL samples - Errors
 
-// Error dialog shown (raw data)
+// Error dialog shown (raw data) 
+// available from 20.0
 traces
 | where timestamp > ago(60d) // adjust as needed
-    and customDimensions.eventId == 'RT0030'
+| where customDimensions.eventId == 'RT0030'
 | project timestamp
+// in which environment/company did it happen
 , aadTenantId = customDimensions.aadTenantId
-, alErrorMessage = customDimensions.alErrorMessage
-, alObjectId = customDimensions.alObjectId
-, alObjectName = customDimensions.alObjectName
-, alObjectType = customDimensions.alObjectType
-, alStackTrace = customDimensions.alStackTrace
-, clientType = customDimensions.clientType
-, companyName = customDimensions.companyName
-, component = customDimensions.component
-, componentVersion = customDimensions.componentVersion
-, environmentType = customDimensions.environmentType
 , environmentName = customDimensions.environmentName
-, eventId = customDimensions.eventId
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// in which extension/app
 , extensionId = customDimensions.extensionId
 , extensionName = customDimensions.extensionName
 , extensionVersion = customDimensions.extensionVersion
+, extensionPublisher = customDimensions.extensionPublisher
+// in which object
+, alObjectId = customDimensions.alObjectId
+, alObjectName = customDimensions.alObjectName
+, alObjectType = customDimensions.alObjectType
+// which user got the error
+, usertelemetryId = case(
+  toint( substring(customDimensions.componentVersion,0,2)) >= 20, user_Id // user telemetry id was introduced in the platform in version 20.0
+, 'N/A'
+)
+// error information
+, clientType = customDimensions.clientType
+, errorMessageInUsersLanguage = customDimensions.alErrorMessage
+, errorMessageInEnglish = customDimensions.alEnglishLanguageDiagnosticsMessage // This dimension was introduced in Business Central 2023 release wave 1, version 21.4.
+, alStackTrace = customDimensions.alStackTrace
 , failureReason = customDimensions.failureReason
-, message
-, customDimensions
+
+
+// Error Message Votes
+// Available from version 20.0
+traces
+| where timestamp >= ago(7d) // adjust as needed. 
+| where customDimensions has 'CL0002'
+| where customDimensions.eventId == 'CL0002'
+| where customDimensions.userFeedback in ('Yes', 'No')
+| extend AadTenantId = tostring( customDimensions.aadTenantId )
+, EnvironmentName = tostring( customDimensions.environmentName )
+| project timestamp
+, AadTenantId, EnvironmentName
+, ClientType = tostring( customDimensions.clientType )
+, ErrorMessage = tostring( customDimensions.errorMessage )
+, ExtensionId = tostring( customDimensions.appId )
+, ExtensionName = tostring( customDimensions.appName )
+, ExtensionVersion = tostring( customDimensions.appVersion )
+, ExtensionPublisher = tostring( customDimensions.appPublisher )
+, StackTrace = customDimensions.alStackTrace
+, HostType = customDimensions.hostType
+, UserFeedback = customDimensions.userFeedback
+, UserLocale = customDimensions.userLocale
+
+
+// available from 19.1
+// This is all errors logged from the FeatureTelemetry module
+traces
+| where timestamp > ago(7d) // adjust as needed
+| where customDimensions.alCategory == 'FeatureTelemetry'
+| where customDimensions.alSubCategory == 'Error'
+| project 
+  aadTenantId = customDimensions.aadTenantId
+, environmentType = customDimensions.environmentType
+, environmentName = customDimensions.environmentName
+, componentVersion = customDimensions.componentVersion
+, extensionPublisher = customDimensions.extensionPublisher
+, extensionVersion = customDimensions.extensionVersion
+, extensionName = customDimensions.extensionName
+, extensionId = customDimensions.extensionId
+, eventId = customDimensions.eventId
+, alCallerAppName = customDimensions.alCallerAppName
+, alCategory = customDimensions.alCategory
+, alCallerAppVersionMajor = customDimensions.alCallerAppVersionMajor
+, alCallerAppVersionMinor = customDimensions.alCallerAppVersionMinor
+, alIsEvaluationCompany = customDimensions.alIsEvaluationCompany
+, alTenantLicenseState = customDimensions.alTenantLicenseState
+, alFeatureName = customDimensions.alFeatureName
+, alSubCategory = customDimensions.alSubCategory
+, alClientType = customDimensions.alClientType
+, alEventName = customDimensions.alEventName
+, alIsAdmin = customDimensions.alIsAdmin
+, alCompany = customDimensions.alCompany
+, alUserRole = customDimensions.alUserRole
+, alErrorCallStack = customDimensions.alErrorCallStack
+, alErrorText = customDimensions.alErrorText
+, usertelemetryId = case(
+  // user telemetry id was introduced in the platform in version 20.0
+  toint( substring(customDimensions.componentVersion,0,2)) >= 20, user_Id
+, 'N/A'
+), message
+
+
+
+// Permission error dialog shown (raw data) 
+// available from 20.1
+//
+// See KQL sample in Permissions.kql

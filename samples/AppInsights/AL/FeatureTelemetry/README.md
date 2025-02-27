@@ -29,11 +29,12 @@ FeatureTelemetry.<LogUsage|LogError|LogUptake>(...)
 ## Guidelines
 
 ### Logging uptake
-- If a feature logs uptake, then there should be calls to register all the following states: `Discovered`, `Set up`, `Used`.
+- If a feature logs uptake, then there should be calls to register all the following states: `Discovered`, `Set up`, `Used`, `Undiscovered`.
 - The current convention for registering uptake states is the following.
     - State `Discovered` should be registered when pages related to the given feature are opened (or otherwise when a user _intentionally_ seeks information about a feature)
     - State `Set up` should be registered when the user performed a set up for the feature (usually right after a record in a table related to the feature is added or updated)
     - State `Used` should be registered when a user _attempts_ to use the feature (note the difference with `LogUsage`, which should be called only if the feature is used _successfully_)
+    - State `Undiscovered` is optional. When a feature is unregistered you can use this option (or when a user disable it when it has been enable. Example is usage of Retention Policies)
 - If `LogUptake` is called from within a try function, the parameter `PerformWriteTransactionsInASeparateSession` should be set to `true`.
 
 
@@ -60,6 +61,9 @@ A: Not every feature can have un uptake funnel. Such features should only call `
 
 Q: How do common custom dimensions work? Will other extension publishers see the information I add to common custom dimensions?  
 A: The common custom dimensions are aggregated _per publisher_, there will be no sharing of telemetry data between different publishers.  
+
+# KQL query
+Feature telemetry can be queried in Application Insights using the following KQL query: [FeatureTelemetry.kql](../../KQL/Queries/ExampleQueriesForEachArea/FeatureTelemetry.kql)
 
 # Disclaimer
 Microsoft Corporation (“Microsoft”) grants you a nonexclusive, perpetual, royalty-free right to use and modify the software code provided by us for the purposes of illustration  ("Sample Code") and to reproduce and distribute the object code form of the Sample Code, provided that you agree: (i) to not use our name, logo, or trademarks to market your software product in which the Sample Code is embedded; (ii) to include a valid copyright notice on your software product in which the Sample Code is embedded; and (iii) to indemnify, hold harmless, and defend us and our suppliers from and against any claims or lawsuits, whether in an action of contract, tort or otherwise, including attorneys’ fees, that arise or result from the use or distribution of the Sample Code or the use or other dealings in the Sample Code. Unless applicable law gives you more rights, Microsoft reserves all other rights not expressly granted herein, whether by implication, estoppel or otherwise. 

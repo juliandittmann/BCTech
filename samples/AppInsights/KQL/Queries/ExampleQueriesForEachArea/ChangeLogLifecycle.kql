@@ -1,0 +1,93 @@
+// KQL samples - Changelog lifecycle
+
+// The following events are emitted by the change log system
+// | Event | Event id | 
+// | ----- | -------- | 
+// | Field logging changed in changelog configuration | AL0000LA1 | 
+// | Field added to changelog configuration | AL0000LA2 | 
+// | Field removed from changelog configuration | AL0000LA3 | 
+
+
+// TBA
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000LA0' // for performance
+| where customDimensions.eventId == 'AL0000LA0'
+| project timestamp
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// TBA: dimensions
+, UsertelemetryId = user_Id
+
+
+// Field logging changed in changelog configuration
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000LA1' // for performance
+| where customDimensions.eventId == 'AL0000LA1'
+| project timestamp
+// in which environment/company did it happen
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// on which field in which table
+, alTableNumber = customDimensions.alTableNumber
+, alTableCaption = customDimensions.alTableCaption
+, alFieldNumber = customDimensions.alFieldNumber
+, alFieldCaption = customDimensions.alFieldCaption
+// what was the configuration change
+, alLogDeletion = customDimensions.alLogDeletion
+, alLogInsertionOld = customDimensions.alLogInsertionOld
+, alLogInsertion = customDimensions.alLogInsertion
+, alLogDeletionOld = customDimensions.alLogDeletionOld
+, alLogModification = customDimensions.alLogModification
+, alLogModificationOld = customDimensions.alLogModificationOld
+// which user made the configuration change
+, UsertelemetryId = user_Id
+
+
+// Field added to changelog configuration
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000LA2' // for performance
+| where customDimensions.eventId == 'AL0000LA2'
+| project timestamp
+// in which environment/company did it happen
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// on which field in which table
+, alTableNumber = customDimensions.alTableNumber
+, alTableCaption = customDimensions.alTableCaption
+, alFieldNumber = customDimensions.alFieldNumber
+, alFieldCaption = customDimensions.alFieldCaption
+// what was the configuration change
+, alLogInsertion = customDimensions.alLogInsertion
+, alLogModification = customDimensions.alLogModification
+, alLogDeletion = customDimensions.alLogDeletion
+// which user made the configuration change
+, UsertelemetryId = user_Id
+
+
+// Field removed from changelog configuration
+traces
+| where timestamp > ago(60d) // adjust as needed
+| where customDimensions has 'AL0000LA3' // for performance
+| where customDimensions.eventId == 'AL0000LA3'
+| project timestamp
+// in which environment/company did it happen
+, aadTenantId = customDimensions.aadTenantId
+, environmentName = customDimensions.environmentName
+, environmentType = customDimensions.environmentType
+, companyName = customDimensions.companyName
+// on which field in which table
+, alTableNumber = customDimensions.alTableNumber
+, alTableCaption = customDimensions.alTableCaption
+, alFieldNumber = customDimensions.alFieldNumber
+, alFieldCaption = customDimensions.alFieldCaption
+// which user made the configuration change
+, UsertelemetryId = user_Id

@@ -1,5 +1,5 @@
 // KQL samples - Retention Policy
-// https://docs.microsoft.com/en-us/dynamics365/business-central/admin-data-retention-policies
+// https://learn.microsoft.com/en-us/dynamics365/business-central/admin-data-retention-policies
 
 
 // Retention Policy Log Entry Logged: Info
@@ -9,7 +9,6 @@ traces
 | project timestamp, eventId=customDimensions.eventId, message
 , alCompanyName = customDimensions.alCompanyName
 , alLogEntry = customDimensions.alLogEntry
-
 
 // Records Deleted Using Retention Policy: Deleted <record count> records from Table <Table id>, <Table name>
 traces
@@ -21,7 +20,6 @@ traces
 , alManualRun = customDimensions.alManualRun
 , alTableName = customDimensions.alTableName
 , alTableNo = customDimensions.alTableNo
-
 
 // First retention policy enabled on: <company name>
 traces

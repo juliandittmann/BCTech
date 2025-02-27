@@ -276,7 +276,7 @@ We need to set things up for our cookie jar project as follows:
 4. Use the access token in the logic app to call a custom API in Business Central.
 
 ### Register the app
-1. Register Business Central as an app in Azure portal under **App Registrations** to be able to request OAuth tokens. For more information, see [Getting Started Developing Connect Apps for Dynamics 365 Business Central](https://docs.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-develop-connect-apps). Follow the steps for Azure Active Directory (AAD) based authentication.
+1. Register Business Central as an app in Azure portal under **App Registrations** to be able to request OAuth tokens. For more information, see [Getting Started Developing Connect Apps for Dynamics 365 Business Central](https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/developer/devenv-develop-connect-apps). Follow the steps for Azure Active Directory (AAD) based authentication.
 2. The following table shows the properties to fill in.
 
     |Property  |Value  |
@@ -287,37 +287,7 @@ We need to set things up for our cookie jar project as follows:
     |API permissions     |Dynamics 365 Business Central<br>user_impersonation         |
 
 ### Get a refresh token
-Request a refresh token manually using a tool such as Postman or Fiddler, and store the token and client secret in Azure Key Vault.
-
-To use Postman to get a refresh token, follow these steps:
-
-1. Do a GET request.
-2. Use the following URL, but replace the tenant domain with our own: https://api.businesscentral.dynamics.com/v1.0<tenant domain\>/api/v1.0
-3. On the Authorization tab, fill in the following fields:
-
-    |Field  |Value  |
-    |---------|---------|
-    |Type     |OAuth 2.0         |
-    |Add authorization data to     |Request Headers         |
-
-4. Click **Get New Access Token**, and then fill in the following fields.
-
-    |Field  |Value  |
-    |---------|---------|
-    |Token Name     |Enter a name.         |
-    |Grant Type     |Authorization Code         |
-    |Callback URL     |http://localhost (must be the same as in our application registration)         |
-    |Auth URL     |https://login.microsoftonline.com/common/oauth2/authorize?resource=https://api.businesscentral.dynamics.com         |
-    |Access Token URL     |https://login.windows.net/<tenant domain\>/oauth2/token?resource=https://api.businesscentral.dynamics.com         |
-    |Client ID     |The ID of application registration         |
-    |Client Secret     |The client secret we created         |
-    |Scope     |offline_access (required to get a refresh token)         |
-    |State:      |leave this blank         |
-    |Client Authentication     |Send client credentials in body         |
-
-5. Click **Request Token**, and then sign in.
-6. The **Manage Access Tokens** page should open and display our token. Find the refresh_token property. This long string is the refresh token we’ll need later.
-7. To test the token, we can click **Use Token** and then click **Send** on the request. If it works, we’ll get the list of APIs that are available in our Business Central tenant.
+Request a refresh token manually using a tool such as [Insomnia](https://insomnia.rest/), [Bruno](https://www.usebruno.com/), [Insomnium](https://github.com/ArchGPT/insomnium/releases/), or [Fiddler](https://www.telerik.com/download/fiddler/), and store the token and client secret in Azure Key Vault.
 
 ### Use Azure Key Vault
 To keep things safe, store the client secret and the refresh token in Azure Key Vault, so that our logic app can use them without exposing them. 
@@ -566,7 +536,7 @@ As before, we’ll need to parse the JSON response with this schema:
     |Field  |Value  |
     |---------|---------|
     |Method     |Post         |
-    |URI     |https://api.businesscentral.dynamics.com/v1.0/sandbox/api/iot/azureiotcentral/v2.0/companies(\<company guid\>)/measurements<br>**Note:** We must insert the GUID of the company we are connecting to in the URI. To find the GUID we can use a tool like Postman to call this API: https://api.businesscentral.dynamics.com/v1.0/sandbox/api/microsoft/automation/v1.0/companies.         |
+    |URI     |https://api.businesscentral.dynamics.com/v1.0/sandbox/api/iot/azureiotcentral/v2.0/companies(\<company guid\>)/measurements<br>**Note:** We must insert the GUID of the company we are connecting to in the URI. To find the GUID we can use a tool like [Insomnia](https://insomnia.rest/), [Bruno](https://www.usebruno.com/), [Insomnium](https://github.com/ArchGPT/insomnium/releases/), or [Fiddler](https://www.telerik.com/download/fiddler/), to call this API: https://api.businesscentral.dynamics.com/v1.0/sandbox/api/microsoft/automation/v1.0/companies.         |
     |Headers     |Connection	Keep-Alive<br>Content-Type	Application/json         |
     |Body     |Paste the code that is available immediately below this table.<br>**Note:** The schema only gives us the structure. We must fill in each value by selecting the corresponding values from the **When a rule is fired** trigger on the **Dynamic Content** page.         |
     |Authentication     |Raw         |
@@ -621,7 +591,7 @@ To set things up, we’ll need to add some data.
     |Then Response     |Create Purchase Order from IoT Workflow Setup<br>**Note:** This response will create a purchase order and send it for approval.         |
 
 6. Turn on the **Enabled** toggle.
-7. If we don't already have an approval workflow for purchase orders, we would need to create one. For more information, see [Walkthrough: Setting Up and Using a Purchase Approval Workflow](https://docs.microsoft.com/en-us/dynamics365/business-central/walkthrough-setting-up-and-using-a-purchase-approval-workflow). 
+7. If we don't already have an approval workflow for purchase orders, we would need to create one. For more information, see [Walkthrough: Setting Up and Using a Purchase Approval Workflow](https://learn.microsoft.com/en-us/dynamics365/business-central/walkthrough-setting-up-and-using-a-purchase-approval-workflow). 
 
 We still need to add some more setup data. The workflow response above will add some of it for us. We need to get our device to trigger the rule to see if it triggers the logic app and calls the custom API. If that works, all we need to do is open the **IoT Device Workflow Setup** page and fill in the **Vendor No.** and an **Item No.** fields. To run the test again, we need to reset the Pending Refill flag in Azure IoT Central.
 

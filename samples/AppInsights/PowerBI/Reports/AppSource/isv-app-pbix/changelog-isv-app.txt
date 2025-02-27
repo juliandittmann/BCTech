@@ -1,0 +1,274 @@
+Welcome to the release notes for the usage app on Business Central app telemetry.
+
+Below, you can see 
+1) ideas for upcoming releases, 
+2) the current state of vNext (the next version to be released), and 
+3) release notes for all released version of the app since the initial release on appsource back in April 2022.
+
+
+-------------
+Pending teams
+-------------
+* Performance: (in 22.0/22.1) On page 'Database lock timeouts', added isolationLevel to SQL visual
+
+
+-----
+Ideas
+-----
+* Dataset: on all queries, link to AppDim. Add global filters, obsolete AppIdDim
+* Administration: App inventory query needs a rework 
+* Administration: Data in telemetry page, stats by app visual has data where app is empty, probably needs fixing in the dataset
+* Performance: add filters on select performance pages to determine if an operation happened in a Job Queue entry run
+* (pending 4 tasks below) Usage: Add global page filters on AppDim. Remove page specific filters.
+* Usage: make 'Page views' page filter on AppDim
+* Usage: make 'Locations' page filter on AppDim
+* Usage: make 'Clients' page filter on AppDim
+* Usage: make 'MAT/WAT/DAT' page filter on AppDim
+* Top level? Single view on customer page
+* Administration: Aged customers (on older versions)
+
+
+Bug reported on Twitter
+https://twitter.com/phenno1/status/1731977434034008216
+it seems that PowerBI for apps does not count apps installed as part as BC upgrade to Inventory. If I update my app manually (via Admin portal) it is counted but if app is updated automatically, together with major BC update, it is not.
+
+
+------------------
+vNext (implemented, coming in the next release, probably available in the beta app)
+Install beta app from: https://aka.ms/bctelemetry-isv-app-beta
+------------------
+* Bug fixed: ObjectDim could not load due to duplicate entries (likely due to using UI on queries)
+
+
+------------------
+2024-04-02 release
+------------------
+* Bug fixed: LRQ page in the Performance report: fixed LRQ by environment visual
+* Dataset: Introduced ClientInfoDim and refactored queries ClientBrowserUsageQuery to use this
+* Usage: On 'Locations' page, added domain to location by environment
+* Performance: On page LRQ: added Domain to visuals
+* Performance: All pages: added Domain to global filters 
+* Administration: On page 'Extension lifecycle', added Domain to visuals
+* Administration: All pages: added Domain, Environment name/type, AAD tenant, and Partner to global filters 
+
+
+------------------
+2023-12-01 release
+------------------
+* Dataset: new parameter "Include only these AppIds". Allows you to filter the report dataset (at refresh time) to only include certain apps.
+
+
+------------------
+2023-11-01 release
+------------------
+* Usage: new page 'Queries'. Shows all usage of data analysis on queries.
+* Usage: on most pages, added visual that shows usage over Last 7 Days, Last 30 Days, From 31 Days - 60 Days ago, From 61 Days - 91 Days ago
+
+
+------------------
+2023-10-02 release
+------------------
+* Dataset: added new mapping of tenant->partner
+* All pages: Renamed global filter AAD tenant ID to (Microsoft) Entra Id. Also added global filter on Partner
+* Errors: on all pages, added an X by environment visual
+* Errors: on all pages, added links to documentation and troubleshooting guide
+* Errors: on page outgoing web service errors, added HTTP details to HTTP status visual. Also added new HTTP filter possibilities.
+* Errors: on page Report Errors, added new visual on what the user did. Also fixed bug where report errors only showed cancelled reports, not exceptions
+* Bug fixed: App slicer now sync across all pages in each report (cannot sync across reports)
+
+
+------------------
+2023-09-08 release
+------------------
+* Bug fixed: Timezone values are wrong (all positive)
+* Bug fixed: Error report, incoming ws calls - fixed 'all errors' visual when no data is present
+* Bug fixed: Performance report, incoming ws calls - fixed title length on status details by http status code, changed visual headers to use lower case
+* Dataset: Added platform version and major version to environment dimension
+* Errors: added global page filters on app, app publisher, app id, and app version
+* Errors: on page FeatureErrors, refactored model to use callstack dimension. Switched to using TenantHash for environment dim reference. Added top/bottom parsing visuals for the AL stack trace. 
+* Administration: on page Inventory, added platform version and major version to environment visual and page filters.
+
+
+------------------
+2023-08-06 release
+------------------
+* Dataset: Updated connector dimension and predicates with new values for 'Power BI (Desktop)', 'PowerQuery Online', 'Power BI (Gateway)', 'Power BI (Online)', 'Power BI (UnknownHost)'
+* Dataset: Introduced new dimensions for Urls and HTTP status codes, added apps from AL telemetry to AppDim 
+* Usage: On page 'Feature Usage', data can now be filtered with the global page filters on the top of the page
+* Errors: On all pages, added a nice banner in green if no errors are present.
+* Errors: On page 'Incoming web service call errors', added filters on HTTP status type and HTTP status error, added new visuals to show call (HTTP) status statistics and details. 
+* Errors: On page 'Outgoing web service call errors', added filters on host and url, now using UrlDimension (so slightly faster data loading), changed 'errors by error type' visual to matrix
+* Errors: On page 'Feature Errors', data can now be filtered with filters from the AppDim dimension
+* Performance: On page 'Incoming web service call performance', added filters on HTTP status type and HTTP status error, added new visuals to show call (HTTP) status statistics and details. 
+* Performance: On page 'Outgoing web service call performance', added filters on host and url, now using UrlDimension (so slightly faster data loading), added new visuals to show call (HTTP) status statistics and details. 
+
+
+------------------
+2023-07-06 release
+------------------
+* Performance: On page Long Running AL, added visual on new dimensions sqlExecutes and sqlRowsRead
+
+
+------------------
+2023-06-22 release
+------------------
+* Dataset: Tuned data load for ReportPerformance. Moved payload info (layout, report format/action, ..) into its own dimension. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Dataset: New "Tenant / Environment / Type" hierarchy on Environment dimension
+* Errors: On page IncomingWebserviceErrors, added two new visuals. First one shows the new OData error dimensions 'Failure Reason' and 'Diagnostic Message'. The second one shows the User Agent set by the caller.
+* Performance: On all pages, added overview section with AI visuals and top 10 avg. 
+* Performance: On page 'Long Running AL', use new dimension exclusiveTime (this dimension was introduced in 21.6/22.0)
+* Performance: On page 'Incoming Web Service performance', added calculations on queue time (introduced in telemetry in v22)
+
+
+------------------
+2023-05-03 release
+------------------
+* Dataset: fixed data load bug in queries AppIdDim and EnvironmentDim (queries did not respect time filter)
+* Dataset: On IncomingWebserviceErrors, moved category and connector info into their own dimensions.
+* Dataset: On IncomingWebservicePerformance, moved category and connector info into their own dimensions.
+* Dataset: on Report errors query, moved tenant, object, app, and client type info to their own dimensions
+* Dataset: On BCPTRuns, fixed duplicate key error
+* Dataset: On ExtensionUpdatePerformance, tuned data load and moved tenant info + extension info into their own dimensions.
+* Usage: Keyvault, visuals looked weird, not anymore
+* Errors: On page Keyvault errors, visuals looked weird, not anymore
+* Errors: On page Report errors page, split the extension/object visual in two
+* Errors: On page Error Dialogs, fixed AL stacktrace visuals that did not filter
+* Performance: On page Reports, added visual to show time to generate dataset and render the report.
+* Performance: On App updates page, changed extension visual and changed statistics visual to use a matrix
+
+
+------------------
+2023-04-05 release
+------------------
+* Dataset: On table ErrorDialogs, moved environment info, extension info, object info, stacktrace, and client type to their own dimensions
+* Dataset: On table LongRunningAL, tuned data load and moved stacktrace, client type, object info, app info and sql info into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Dataset: On table OutgoingWebServiceErrorsQuery, OutgoingWebServicePerformanceQuery, optimized data load and introduced AL stacktrace
+* Dataset: On tables KeyVaultErrors and KeyVaultUsage, moved app info into its own dimensions. Also removed filters on tenant info as this does exist in the signal. 
+* Dataset: fixing bug in data loading if telemetry has BCPT data prior to 21.3 (BCTech GitHub Issue #188).
+* Usage report: new page 'MAT/WAT/DAT' showing Monthly/Weekly/Daily tenants.
+* Usage: On page Keyvault usage, used combined app name and id on X by app visual
+* Performance: new page 'Session creation' that shows impact on session performance by your apps
+* Performance report: On page 'Long Running AL', added per-environment visual and aligned per-app/per-object visuals to new design
+* Performance: On page OutgoingWebServicePerformance, added AL stacktrace visual and top/bottom of the stacktrace
+* Performance: add visual to slow logins page on outgoing ws call happening in the OnCompanyOpen trigger
+* Errors: new page 'Feature Telemetry app errors', showing events AL0000G7J and AL0000G7K that indicate that extensions use the Feature Telemetry module wrong
+* Errors: On page OutgoingWebServiceErrors, added AL stacktrace visual and top/bottom of the stacktrace
+* Errors: On page 'Error dialogs', also show error message in English (available from 21.4), added per-app/per-object visuals.
+* Errors: On page Keyvault errors, added errors by app visual
+
+
+------------------
+2023-03-01 release
+------------------
+* Dataset: On table LongRunningSQLQueries, tuned data load and moved stacktrace and client type into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Dataset: On tables ExtensionLifeCycleErrors, ExtensionUpdatePerformanceQuery, IncomingWebServiceErrorsQuery, OutgoingWebServiceErrorsQuery, tuned data load and moved tenant and extension info into their own dimensions. This will allow the app to load more reporting data (for bigger telemetry databases).
+* Usage report: On pages 'Page views' 'Reports', 'Feature Usage', 'Feature Uptake', and 'Integrations' added per environment visual
+* Performance report: used combined app name and id on X by app visuals (pageviews, reports, incoming ws, outgoing ws, Updates)
+* Performance report: On page 'Pageviews', added per-app/per-object visuals
+* Performance report: On page 'Outgoing webservice calls', added client type. 
+* Performance report: On page 'Long RunningSQLQueries' in Explanation, mention "are you missing a SetCurrentKey?"
+* Errors: extension lifecycle page, make error details visual full width
+* Errors: on incoming/outgoing ws errors pages, added per-app/per-object visuals
+
+
+------------------
+2023-02-01 release
+------------------
+* Usage: integrations page, added visual to show outgoing calls by host
+* Usage: 'Feature uptake' page, add domain to Environment information visual
+* Errors: On all pages, added visuals to show count last day, last week, older
+* Performance: On page 'Pageviews', added per-app/per-object visuals
+* Performance: On page 'Long running SQL queries', added per-app/per-object visuals, improvements to explanation
+* Dataset: fixed issue with JSON parsing in appsource validation data
+* Dataset: Moved client info (screen size, language, locale, ..) out of pageviewperformance and into its own table. This will allow the app to load more pageview data (for bigger telemetry databases).
+* Dataset: Fixed missing values in http method dimension
+* Dataset: Tuned data load for ReportPerformance. Moved client type into its own dimension. This will allow the app to load more pageview data (for bigger telemetry databases
+* Dataset: Tuned data load for query PageViewPerformance: Moved page, app info, and client type to their own dimensions. Switched to using TenantHash for environment dim reference
+
+
+------------------
+2023-01-03 release
+------------------
+* Usage: On page 'Integrations', fixed filters
+* Performance: New page showing Performance Toolkit (BCPT) data.
+* Performance: On page 'Incoming webservice calls', tuned data load, fixed filters
+* Performance: On page 'Long Running SQL queries', tuned data load, fixed broken analyze in KQL visual, added per-app/per-object visuals, added explanation for SQL queries
+* Performance: On page 'Outgoing webservice calls', tuned data load, added min/max measures on execution time, changed ws by http code visual to show data by response type.
+* Performance: On page 'Reports', tuned data load. Also added per-app/per-object visuals and added sum time. Enhanced description with better tuning advice. Fixed filters
+* Administration: On page 'Extension lifecycle', tuned data load, added visual for events by version. Also changed 'App Lifecycle Events by App' visual to a matrix
+* Administration: On page 'ContainerHelper', fixed empty events
+* Administration: On page 'Al-Go', fixed empty events, fixed filters
+* Dataset: Tuned data load for queries IncomingWebServiceErrors, PageViewPerformance, FeatureUsage, FeatureErrors, ExtensionLifecycle.
+* Dataset: Tuned data refresh to allow for 30 min data loads per query. Also using 'set notruncation;' in all KQL queries to remove 500k row limits
+* Dataset: Fixed bug 'AppInventory.kql does not show on-prem multitenant instances' (Issue #169)
+
+
+------------------
+2022-12-01 release
+------------------
+* Usage: On pages 'Page views', 'Reports', and 'Feature Usage', Added new visuals 'X by Publisher' and 'X by Extension Version'
+* Usage: On pages 'Clients', 'Locations', 'Reports', 'Feature Usage', 'Integrations', 'Keyvault' added new visuals 'X by app'
+* Errors: on page 'Error dialogs', added visuals with info on top/bottom line of the stack trace
+* Administration: on Configuration page, changed order of parameter visuals, added EnvironmentDim visual
+* Administration: on Inventory page, added domain to 'Apps by environment' visual (GitHub issue #146)
+* Administration: on AppsourceValidations page, added date filter and 'requests by date' visual (GitHub issue #162)
+* Administration report: Added hierarchy, message details, and feature telemetry dimension for events on telemetry event statistics page
+* Performance report: Added 'number of columns' and 'Take locks' fields to SQL statements visual on Long Running SQL page
+* Performance report: Added ability to do version-to-version comparisons on 'Updates' page
+* All four reports: turned on ability to download underlaying data from all visuals
+* All four reports: turned on to analyze further with KQL on all pages
+* Dataset: tuned all KQL queries. Impact is up to 5x faster refresh time.
+
+------------------
+2022-11-07 release
+------------------
+* Administration, Extension lifecycle page: fixed 'unknown message' for LC0010
+* Administration, Extension lifecycle page: Added per-environment visual
+* Administration, Upgrade flow page: Added per-app visual
+* Administration, About the report page: Fixed wrong text and links
+* Administration, app source validation page: added failure reason visual
+* Administration report: New page 'Configuration' to show how the app has been configured.
+* BC Telemetry App (Issue #145): changing order of top page filters to Publisher / App Name / App Id / Version (on Administration report)
+* Performance: on pages 'Long running SQL', and 'Long running AL' added visual with info on top line of the stack trace
+* Performance: on page 'Long running SQL', added 'Take locks' column
+* Performance: on page 'Updates', added SQL row to SQL statement ratio
+* Performance: on pages 'Outgoing ws', 'Incoming ws', 'Long running SQL', and 'Long running AL' changed sums to show data in seconds and adjusted avg to show ms with no decimals.
+* Dataset: AAD tenant mapping more stable against json syntax errors
+
+
+------------------
+2022-09-28 release
+------------------
+* fixed (yet another) bug in datamodel for app source validation
+* Administration report: new page for BCContainerHelper container usage (draft version)
+* Administration report: new page for AL-Go for GitHub usage (draft version)
+
+------------------
+2022-09-27 release
+------------------
+* app source validation page now filters as expected
+* demo data now shows failed app source validations
+
+
+------------------
+2022-09-21 release
+------------------
+* fixed bug in datamodel for app source validation
+
+
+------------------
+2022-09-07 release
+------------------
+Initial version published to app source for public preview.
+
+
+-----
+Ideas 
+-----
+-	In some pages you print stack traces or error message. This is fine, but can we add the operationId, so the developers can use it in KQL for further analysis.
+Good idea, also valuable for the VAR app
+
+-	In the Performance report a percentile (95th) would be useful (like in Azure Portal Application Insights).
+Good idea, also valuable for the VAR app
+
+-	Is it possible to visualize performance degradation over days or weeks?

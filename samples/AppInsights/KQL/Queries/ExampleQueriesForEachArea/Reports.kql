@@ -1,140 +1,178 @@
 // KQL samples - Report execution
 
-// Use renames in the project operator if you don't need to filter on the columns extracted from customDimensions
-// move columns up to the extend operator and add a tostring function call if you need to filter or summarize on it
+// The following operations about report generation can be found in telemetry
+//
+// Successfull report generation: eventId == 'RT0006' and result == 'Success'
+// Failed report generation: eventId == 'RT0006' and result <> 'Success'
+// Cancelled report generation: eventId == 'RT0007'
+// Cancelled report generation with commits to data: eventId == 'RT0011'
+
+////////////////////////////////////////////////////////////////////////////////////////
+//
+// Please read the documentation article
+// https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/administration/telemetry-reports-trace
+// for updated versions of these queries and also much more details on report telemetry
+// 
+////////////////////////////////////////////////////////////////////////////////////////
 
 // successful report execution (raw data)
 traces
 | where timestamp > ago(60d) // adjust as needed
-| where operation_Name == "Success report generation" // do note that in a later version of the schema, this field will not be used 
-     or customDimensions.eventId == 'RT0006' // introduced in version 16.1
-| where customDimensions.result == "Success"
-| extend aadID = customDimensions.aadTenantId
+| where operation_Name == 'Success report generation' // do note that in a later version of the schema, this field will not be used 
+     or customDimensions.eventId == 'RT0006'          // introduced in version 16.1
+| where customDimensions.result == 'Success'
+| project timestamp
+// in which environment/company did it happen
+, aadTenantId = customDimensions.aadTenantId
 , environmentName = customDimensions.environmentName
 , environmentType = customDimensions.environmentType
 , companyName = customDimensions.companyName
-| project timestamp
-, eventId = customDimensions.eventId 
+// in which extension/app
 , extensionId = customDimensions.extensionId
 , extensionName = customDimensions.extensionName
 , extensionVersion = customDimensions.extensionVersion
 , extensionPublisher = customDimensions.extensionPublisher
+// in which object
 , alObjectId = customDimensions.alObjectId
 , alObjectName = customDimensions.alObjectName
 , alObjectType = customDimensions.alObjectType
-, alStackTrace = customDimensions.alStackTrace
+// what did the user do
+, documentFormat = customDimensions.documentFormat   // documentFormat dimension added in version 20.0
+, LayoutAppId = customDimensions.layoutAppId         // layout dimensions added in version 20.0
+, LayoutName = customDimensions.layoutName           // layout dimensions added in version 20.0
+, LayoutType = customDimensions.layoutType           // layout dimensions added in version 20.0
+, reportAction = customDimensions.reportAction       // reportAction dimension added in version 20.0
+, reportingEngine = customDimensions.reportingEngine // reportingEngine dimension was added in version 17.3
+// which user ran the report
+, usertelemetryId = case(
+  toint( substring(customDimensions.componentVersion,0,2)) >= 20, user_Id // user telemetry id was introduced in the platform in version 20.0
+, 'N/A'
+)
+// performance data
 , numberOfRows = customDimensions.numberOfRows
-, result = customDimensions.result
-// reportingEngine dimension was added in version 17.3
-, reportingEngine = customDimensions.reportingEngine
-, serverExecutionTime = customDimensions.serverExecutionTime
-, serverExecutionTimeInMS = toreal(totimespan(customDimensions.serverExecutionTime))/10000 //the datatype for executionTime is timespan 
-// sqlDatabaseAccessIntent dimension added in version 19.1
-, sqlDatabaseAccessIntent = customDimensions.sqlDatabaseAccessIntent 
-// reportAction dimension added in version 20.0
-, reportAction = customDimensions.reportAction
-// documentFormat dimension added in version 20.0
-, documentFormat = customDimensions.documentFormat
-// layout dimensions added in version 20.0
-, LayoutAppId = customDimensions.layoutAppId
-, LayoutName = customDimensions.layoutName
-, LayoutType = customDimensions.layoutType
+// , serverExecutionTime = customDimensions.serverExecutionTime // the datatype for executionTime is timespan
+, serverExecutionTimeInMS = toreal(totimespan(customDimensions.serverExecutionTime))/10000 // this shows how to convert timespan to millisecods
+, sqlDatabaseAccessIntent = customDimensions.sqlDatabaseAccessIntent  // sqlDatabaseAccessIntent dimension added in version 19.1
 , sqlExecutes = customDimensions.sqlExecutes 
 , sqlRowsRead = customDimensions.sqlRowsRead
-, totalTime = customDimensions.totalTime
-, totalTimeInMS = toreal(totimespan(customDimensions.totalTime))/10000 //the datatype for executionTime is timespan 
-, message, customDimensions
+// , totalTime = customDimensions.totalTime // the datatype for totalTime is timespan
+, totalTimeInMS = toreal(totimespan(customDimensions.totalTime))/10000 // this shows how to convert timespan to millisecods
+| extend renderTimeInMS = totalTimeInMS - serverExecutionTimeInMS
+
 
 
 // failed report execution (raw data)
 traces
 | where timestamp > ago(60d) // adjust as needed
-| where operation_Name == "Failed report generation" // do note that in a later version of the schema, this field will not be used 
-  or customDimensions.eventId == 'RT0006' // introduced in version 16.1
-| where customDimensions.result <> "Success"
-| extend aadID = customDimensions.aadTenantId
+| where operation_Name == 'Failed report generation' // do note that in a later version of the schema, this field will not be used 
+  or customDimensions.eventId == 'RT0006'            // introduced in version 16.1
+| where customDimensions.result <> 'Success'
+| project timestamp
+// in which environment/company did it happen
+, aadTenantId = customDimensions.aadTenantId
 , environmentName = customDimensions.environmentName
 , environmentType = customDimensions.environmentType
 , companyName = customDimensions.companyName
-| project timestamp
-, eventId = customDimensions.eventId
+// in which extension/app
 , extensionId = customDimensions.extensionId
 , extensionName = customDimensions.extensionName
 , extensionVersion = customDimensions.extensionVersion
 , extensionPublisher = customDimensions.extensionPublisher
+// in which object
 , alObjectId = customDimensions.alObjectId
 , alObjectName = customDimensions.alObjectName
 , alObjectType = customDimensions.alObjectType
+// what did the user do
+, documentFormat = customDimensions.documentFormat   // documentFormat dimension added in version 20.0
+, LayoutAppId = customDimensions.layoutAppId         // layout dimensions added in version 20.0
+, LayoutName = customDimensions.layoutName           // layout dimensions added in version 20.0
+, LayoutType = customDimensions.layoutType           // layout dimensions added in version 20.0
+, reportAction = customDimensions.reportAction       // reportAction dimension added in version 20.0
+, reportingEngine = customDimensions.reportingEngine // reportingEngine dimension was added in version 17.3
+// which user ran the report
+, usertelemetryId = case(
+  toint( substring(customDimensions.componentVersion,0,2)) >= 20, user_Id // user telemetry id was introduced in the platform in version 20.0
+, 'N/A'
+)
+// what happened
 , alStackTrace = customDimensions.alStackTrace
 , failureReason = customDimensions.result
-, numberOfRows = customDimensions.numberOfRows
-// reportingEngine dimension added in version 17.3
-, reportingEngine = customDimensions.reportingEngine
-// reportAction dimension added in version 20.0
-, reportAction = customDimensions.reportAction
-// documentFormat dimension added in version 20.0
-, documentFormat = customDimensions.documentFormat
-, serverExecutionTime = customDimensions.serverExecutionTime
-, serverExecutionTimeInMS = toreal(totimespan(customDimensions.serverExecutionTime))/10000 //the datatype for executionTime is timespan 
-, totalTime = customDimensions.totalTime
-, totalTimeInMS = toreal(totimespan(customDimensions.totalTime))/10000 //the datatype for executionTime is timespan 
-, message, customDimensions
+
 
 
 // cancelled report execution (raw data)
 traces
 | where timestamp > ago(60d) // adjust as needed
-| where operation_Name == "Cancellation report generation" // do note that in a later version of the schema, this field will not be used   
-     or customDimensions.eventId == "RT0007" // introduced in version 16.1
-| extend aadID = customDimensions.aadTenantId
+| where operation_Name == 'Cancellation report generation' // do note that in a later version of the schema, this field will not be used   
+     or customDimensions.eventId == 'RT0007' // introduced in version 16.1
+| project timestamp
+// in which environment/company did it happen
+, aadTenantId = customDimensions.aadTenantId
 , environmentName = customDimensions.environmentName
 , environmentType = customDimensions.environmentType
 , companyName = customDimensions.companyName
+// in which extension/app
 , extensionId = customDimensions.extensionId
 , extensionName = customDimensions.extensionName
 , extensionVersion = customDimensions.extensionVersion
+, extensionPublisher = customDimensions.extensionPublisher
+// in which object
 , alObjectId = customDimensions.alObjectId
 , alObjectName = customDimensions.alObjectName
 , alObjectType = customDimensions.alObjectType
-, alStackTrace = customDimensions.alStackTrace
-, cancelReason = case(
-  message contains "The number of processed rows exceeded", "MaxRowsExceeded"
-, message contains "The action took longer to complete", "MaxTimeExceeded"
-, message contains "Received a cancellation request from the user", "UserCancelled"
-, "unknown"
+// what did the user do
+, documentFormat = customDimensions.documentFormat   // documentFormat dimension added in version 20.0
+, LayoutAppId = customDimensions.layoutAppId         // layout dimensions added in version 20.0
+, LayoutName = customDimensions.layoutName           // layout dimensions added in version 20.0
+, LayoutType = customDimensions.layoutType           // layout dimensions added in version 20.0
+, reportAction = customDimensions.reportAction       // reportAction dimension added in version 20.0
+, reportingEngine = customDimensions.reportingEngine // reportingEngine dimension was added in version 17.3
+// which user ran the report
+, usertelemetryId = case(
+  toint( substring(customDimensions.componentVersion,0,2)) >= 20, user_Id // user telemetry id was introduced in the platform in version 20.0
+, 'N/A'
 )
-// reportingEngine dimension added in version 17.3
-, reportingEngine = customDimensions.reportingEngine
-// reportAction dimension added in version 20.0
-, reportAction = customDimensions.reportAction
-// documentFormat dimension added in version 20.0
-, documentFormat = customDimensions.documentFormat
-, message, customDimensions
+// why was the report cancelled
+, cancelReason = tostring( customDimensions.cancelReason )
+, cancelReasonLong = case(
+  message has 'The number of processed rows exceeded', 'MaxRowsExceeded'
+, message has 'The action took longer to complete', 'MaxTimeExceeded'
+, message has 'Received a cancellation request from the user', 'UserCancelled'
+, 'Unknown reason'
+)
 
 
 // cancelled report execution, where COMMIT occurred (raw data)
 traces
 | where timestamp > ago(60d) // adjust as needed
 | where customDimensions.eventId == 'RT0011'
-| extend aadTenantId = tostring( customDimensions.aadTenantId )
+| project timestamp
+// in which environment/company did it happen
+, aadTenantId = customDimensions.aadTenantId
 , environmentName = customDimensions.environmentName
-, environmentType = tostring( customDimensions.environmentType )
+, environmentType = customDimensions.environmentType
 , companyName = customDimensions.companyName
-, cancelReason = tostring( customDimensions.cancelReason )
-, component = customDimensions.component 
-, componentVersion = customDimensions.componentVersion 
-, clientType = customDimensions.clientType
+// in which extension/app
 , extensionId = customDimensions.extensionId
-, extensionPublisher = customDimensions.extensionPublisher
 , extensionName = customDimensions.extensionName
 , extensionVersion = customDimensions.extensionVersion
+, extensionPublisher = customDimensions.extensionPublisher
+// in which object
 , alObjectId = customDimensions.alObjectId
 , alObjectName = customDimensions.alObjectName
 , alObjectType = customDimensions.alObjectType
+// what did the user do
+, documentFormat = customDimensions.documentFormat   // documentFormat dimension added in version 20.0
+, LayoutAppId = customDimensions.layoutAppId         // layout dimensions added in version 20.0
+, LayoutName = customDimensions.layoutName           // layout dimensions added in version 20.0
+, LayoutType = customDimensions.layoutType           // layout dimensions added in version 20.0
+, reportAction = customDimensions.reportAction       // reportAction dimension added in version 20.0
+, reportingEngine = customDimensions.reportingEngine // reportingEngine dimension was added in version 17.3
+// which user ran the report
+, usertelemetryId = case(
+  toint( substring(customDimensions.componentVersion,0,2)) >= 20, user_Id // user telemetry id was introduced in the platform in version 20.0
+, 'N/A'
+)
+// why was the report cancelled
+, cancelReason = tostring( customDimensions.cancelReason )
 , alStackTrace = customDimensions.alStackTrace
-// reportingEngine dimension added in version 17.3
-, reportingEngine = customDimensions.reportingEngine
-// reportAction dimension added in version 20.0
-, reportAction = customDimensions.reportAction
-// documentFormat dimension added in version 20.0
-, documentFormat = customDimensions.documentFormat
